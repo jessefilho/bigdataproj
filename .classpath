@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hadoop-common-2.9.0.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hadoop-mapreduce-client-core-2.9.0.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-annotations-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-client-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-common-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-examples-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-external-blockcache-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-hadoop-compat-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-it-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-metrics-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-metrics-api-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-prefix-tree-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-procedure-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-protocol-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-rest-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-rsgroup-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-server-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-shell-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-testing-util-1.4.9.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-thrift-1.4.9.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
