@@ -24,18 +24,7 @@ $ `java -cp  'hbase classpath' :bigdataproj.jar:load_lib/* bdma.bigdata.aiwsbu.d
 
 load_lib/ is a directory with all dependecies of [hadoop](https://mvnrepository.com/artifact/org.apache.hadoop), [HBase](https://mvnrepository.com/search?q=HBase%20) and [javafaker](https://mvnrepository.com/artifact/com.github.javafaker/javafaker).
 
-## Architecture
 
-```mermaid
-graph LR
-
-A[HBase] --> C(Hadoop/MapReduce)
-B((Logs)) 
-C --> B
-C --> D((REST API))
-```
-
-You can render UML diagrams using [Mermaid](https://mermaidjs.github.io/).
 
 References
 -
