@@ -54,6 +54,7 @@ public class Setup {
                     admin.deleteTable(tableName);
                 } catch (Exception ignored) {
                 }
+                
                 HTableDescriptor htd = new HTableDescriptor(tableName);
                 for (String familyName : schemaMap.get(tableName)) {
                     htd.addFamily(new HColumnDescriptor(familyName));
