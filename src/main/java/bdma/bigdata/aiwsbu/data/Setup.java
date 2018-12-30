@@ -19,7 +19,7 @@ public class Setup {
 
     private Connection connection = null;
 
-    private Setup() {
+    public Setup() {
         try {
             connection = ConnectionFactory.createConnection(HBaseConfiguration.create());
         } catch (IOException e) {
