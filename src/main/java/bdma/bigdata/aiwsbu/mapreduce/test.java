@@ -59,18 +59,19 @@ public class test {
 		Configuration conf = HBaseConfiguration.create();		
 		Job job = Job.getInstance(conf,"test_jobName");
 		Table table = connection.getTable(TableName.valueOf(tableCourse));  
-
-		Scan scan = new Scan();
-		//ResultScanner fromscanner = table.getScanner(scan);
-		job.setJarByClass(test.class);
-		job.getConfiguration().set("txt", tableCourse);
-		job.setMapperClass(TokenizerMapper.class);
-		job.setCombinerClass(IntSumReducer.class);
-		job.setReducerClass(IntSumReducer.class);
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(IntWritable.class);
 		
-		FileOutputFormat.setOutputPath(job, new Path(args[0]));
+		System.out.println(table.getName());
+//		Scan scan = new Scan();
+//		//ResultScanner fromscanner = table.getScanner(scan);
+//		job.setJarByClass(test.class);
+//		job.getConfiguration().set("txt", tableCourse);
+//		job.setMapperClass(TokenizerMapper.class);
+//		job.setCombinerClass(IntSumReducer.class);
+//		job.setReducerClass(IntSumReducer.class);
+//		job.setOutputKeyClass(Text.class);
+//		job.setOutputValueClass(IntWritable.class);
+//		
+//		FileOutputFormat.setOutputPath(job, new Path(args[0]));
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 
 		//scan.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs

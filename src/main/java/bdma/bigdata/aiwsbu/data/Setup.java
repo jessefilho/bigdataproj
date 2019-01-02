@@ -176,8 +176,8 @@ public class Setup {
     }
 
     private void run() {
-        createTables();
-        insertRows();
+        //createTables();
+        //insertRows();
         System.out.println("Done!");
     }
 }
