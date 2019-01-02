@@ -15,6 +15,13 @@
 
 
 	<dependencies>
+	<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-server -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-server</artifactId>
+		    <version>1.4.9</version>
+		</dependency>
+	
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

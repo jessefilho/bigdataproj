@@ -23,7 +23,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hadoop-mapreduce-client-core-2.9.0.jar"/>
 	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-annotations-1.4.9.jar"/>
 	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-client-1.4.9.jar"/>
 	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-examples-1.4.9.jar"/>
@@ -37,7 +36,6 @@
 	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-protocol-1.4.9.jar"/>
 	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-rest-1.4.9.jar"/>
 	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-rsgroup-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-server-1.4.9.jar"/>
 	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-shell-1.4.9.jar"/>
 	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-testing-util-1.4.9.jar"/>
 	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-thrift-1.4.9.jar"/>

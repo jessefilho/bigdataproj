@@ -23,6 +23,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 
@@ -71,18 +72,20 @@ public class Question1 {
 	
 	
 	// REDUCER
-	public static class Reducer1 extends TableReducer<ImmutableBytesWritable, IntWritable, ImmutableBytesWritable> {
+	//public static class Reducer1 extends TableReducer<ImmutableBytesWritable, IntWritable, ImmutableBytesWritable>
+	public static class Reducer1 extends TableReducer<Text,Text,Text> {
 
-        public void reduce(ImmutableBytesWritable key, Iterable<IntWritable> values, Context context)
+        public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
             int sum = 0;
             for (IntWritable val : values) {
                 sum += val.get();
             }
-
-            Put put = new Put(key.get());
+            
+            Put put = new Put(key.toString().getBytes());
             put.addImmutable(Bytes.toBytes("details"), Bytes.toBytes("total"), Bytes.toBytes(sum));
-            System.out.println(String.format("stats :   key : %d,  count : %d", Bytes.toInt(key.get()), sum));
+            System.out.println(String.format("stats :   key : %d,  count : %d", Bytes.toInt(key.toString().getBytes()), sum));
+            //context.write(key, put);
             context.write(key, put);
         }
     }
@@ -137,7 +140,8 @@ public class Question1 {
         		ImmutableBytesWritable.class,
         		IntWritable.class, job);
         
-        TableMapReduceUtil.initTableReducerJob(null, Reducer1.class, job);
+        //TableMapReduceUtil.initTableReducerJob(table.getName(), Reducer1.class, job);
+//        TableMapReduceUtil.initTableReducerJob(tableStudent, Reducer1.class, job);
         
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
