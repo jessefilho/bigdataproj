@@ -10,7 +10,6 @@ import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-
 import java.util.*;
 
 public class Setup {
@@ -19,7 +18,7 @@ public class Setup {
 
     private Connection connection = null;
 
-    public Setup() {
+    private Setup() {
         try {
             connection = ConnectionFactory.createConnection(HBaseConfiguration.create());
         } catch (IOException e) {
@@ -54,7 +53,6 @@ public class Setup {
                     admin.deleteTable(tableName);
                 } catch (Exception ignored) {
                 }
-                
                 HTableDescriptor htd = new HTableDescriptor(tableName);
                 for (String familyName : schemaMap.get(tableName)) {
                     htd.addFamily(new HColumnDescriptor(familyName));
@@ -88,7 +86,6 @@ public class Setup {
                 for (String instructor : course.getInstructors()) {
                     put.addImmutable(Bytes.toBytes("I"), Bytes.toBytes(++n), Bytes.toBytes(instructor));
                 }
-                System.out.println(put);
                 table.put(put);
             }
         } catch (Exception e) {
@@ -97,7 +94,7 @@ public class Setup {
     }
 
     private void insertRowsGrade() {
-        System.out.println("Inserting rows to table: " + Namespace.getGradeTable());        
+        System.out.println("Inserting rows to table: " + Namespace.getGradeTable());
         try (Table table = connection.getTable(Namespace.getGradeTableName())) {
             for (Student student : Student.getPool()) {
                 int y = Integer.valueOf(student.getRowKey().substring(0, 4)); // Year
@@ -120,7 +117,6 @@ public class Setup {
                             put = new Put(Bytes.toBytes(rowKey));
                             note = Random.getNumber(0, 2000, 4);
                             put.addImmutable(Bytes.toBytes("#"), Bytes.toBytes("G"), Bytes.toBytes(note));
-                            System.out.println(put);
                             table.put(put);
                         }
                     }
@@ -146,7 +142,6 @@ public class Setup {
                     for (String course : courses.get(year)) {
                         put.addImmutable(Bytes.toBytes("#"), Bytes.toBytes(++n), Bytes.toBytes(course));
                     }
-                    System.out.println(put);
                     table.put(put);
                 }
             }
@@ -167,7 +162,6 @@ public class Setup {
                 put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("D"), Bytes.toBytes(student.getDomicileAddress()));
                 put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("E"), Bytes.toBytes(student.getEmailAddress()));
                 put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("P"), Bytes.toBytes(student.getPhoneNumber()));
-                System.out.println(put);
                 table.put(put);
             }
         } catch (Exception e) {
@@ -176,8 +170,8 @@ public class Setup {
     }
 
     private void run() {
-        //createTables();
-        //insertRows();
+        createTables();
+        insertRows();
         System.out.println("Done!");
     }
 }

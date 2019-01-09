@@ -23,21 +23,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-annotations-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-client-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-examples-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-external-blockcache-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-hadoop-compat-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-it-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-metrics-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-metrics-api-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-prefix-tree-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-procedure-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-protocol-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-rest-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-rsgroup-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-shell-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-testing-util-1.4.9.jar"/>
-	<classpathentry kind="lib" path="F:/Documents/bigdataproject/hbase-thrift-1.4.9.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

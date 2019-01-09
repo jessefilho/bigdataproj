@@ -39,20 +39,15 @@
 			<artifactId>hadoop-mapreduce-client-core</artifactId>
 			<version>2.7.7</version>
 		</dependency>
+		
+		
 		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-client -->
 		<dependency>
 		    <groupId>org.apache.hbase</groupId>
 		    <artifactId>hbase-client</artifactId>
-		    <version>1.4.9</version>
+		    <version>1.2.6.1</version>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-client -->
-		<!-- <dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase-client</artifactId>
-			<version>2.1.1</version>
-		</dependency> -->
-		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase -->
+
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase</artifactId>
@@ -65,6 +60,104 @@
 			<artifactId>hadoop-hdfs</artifactId>
 			<version>2.7.7</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-annotations -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-annotations</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-common -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-common</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-examples -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-examples</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-hadoop-compat -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-hadoop-compat</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-it -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-it</artifactId>
+		    <version>1.2.6.1</version>
+		    <scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-prefix-tree -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-prefix-tree</artifactId>
+		    <version>1.2.6.1</version>
+		    <scope>runtime</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-procedure -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-procedure</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-protocol -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-protocol</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-resource-bundle -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-resource-bundle</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-rest -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-rest</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-server -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-server</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-thrift -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-thrift</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-shell -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-shell</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-external-blockcache -->
+		<dependency>
+		    <groupId>org.apache.hbase</groupId>
+		    <artifactId>hbase-external-blockcache</artifactId>
+		    <version>1.2.6.1</version>
+		</dependency>
+		
+		
 
 
 		<dependency>

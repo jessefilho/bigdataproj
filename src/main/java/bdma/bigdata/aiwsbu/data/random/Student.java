@@ -6,13 +6,10 @@ import bdma.bigdata.aiwsbu.data.util.Random;
 
 public class Student {
 
-    private static Pool<Student> pool = new Pool<Student>();
+    private static Pool<Student> pool = new Pool<>();
 
-    private String firstName = Configuration.generateFirstName();
-    private String lastName = Configuration.generateLastName();
-    private String domicileAddress = Configuration.generateDomicileAddress();
-    private String email = Configuration.generateEmailAddress();
-    private String phoneNumber = Configuration.generatePhoneNumber();
+    private String firstName = Configuration.makeName();
+    private String lastName = Configuration.makeName();
     private String program;
     private String rowKey;
 
@@ -60,21 +57,19 @@ public class Student {
     }
 
     public String getDomicileAddress() {
-//        StringBuilder address = new StringBuilder(Random.getNumber(1, 999));
-//        for (int i = 1; i < Random.getInteger(2, 5); ++i) {
-//            address.append(" ").append(Random.getCapitalizedString(5, 8));
-//        }
-//        return address.toString();
-    	return domicileAddress;
+        StringBuilder address = new StringBuilder(Random.getNumber(1, 999));
+        for (int i = 1; i < Random.getInteger(2, 5); ++i) {
+            address.append(" ").append(Random.getCapitalizedString(5, 8));
+        }
+        return address.toString();
     }
 
     public String getEmailAddress() {
-        return email;
+        return "";
     }
 
     public String getPhoneNumber() {
-        //return "0" + Random.getNumber(111111111, 999999999);
-    	return phoneNumber;
+        return "0" + Random.getNumber(111111111, 999999999);
     }
 
     private Student setProgram(int year) {

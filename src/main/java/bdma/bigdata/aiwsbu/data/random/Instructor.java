@@ -10,10 +10,10 @@ import java.util.TreeSet;
 
 public class Instructor {
 
-    private static Pool<Instructor> pool = new Pool<Instructor>();
+    private static Pool<Instructor> pool = new Pool<>();
 
-    private Map<Integer, Set<String>> courses = new TreeMap<Integer, Set<String>>();
-    private String name = Configuration.generateFirstName() + " " + Configuration.generateLastName();
+    private Map<Integer, Set<String>> courses = new TreeMap<>();
+    private String name = Configuration.makeName() + " " + Configuration.makeName();
 
     private Instructor() {
     }
@@ -43,7 +43,7 @@ public class Instructor {
 
     public void addCourse(String course, int year) {
         if (!courses.containsKey(year)) {
-        	courses.put(year, new TreeSet<String>());
+            courses.put(year, new TreeSet<>());
         }
         courses.get(year).add(course);
     }
