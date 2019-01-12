@@ -74,7 +74,7 @@ public class Question1 {
         	
         	
         	
-        	//Grade
+        	//Grades
         	// year/semesterstudent/course
         	//2015/072012000123/S07A006
     		
