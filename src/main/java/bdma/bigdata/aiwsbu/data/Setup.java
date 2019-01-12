@@ -6,6 +6,7 @@ import bdma.bigdata.aiwsbu.data.random.Instructor;
 import bdma.bigdata.aiwsbu.data.random.Student;
 import bdma.bigdata.aiwsbu.data.util.Random;
 import org.apache.hadoop.hbase.*;
+import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
