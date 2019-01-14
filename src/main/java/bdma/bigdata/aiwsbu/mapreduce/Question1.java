@@ -11,12 +11,15 @@ import org.apache.hadoop.hbase.io.*;
 import org.apache.hadoop.hbase.mapreduce.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.SequenceFileOutputFormat;
 import org.apache.hadoop.mapred.TextOutputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.omg.CORBA.portable.ValueOutputStream;
+
+import bdma.bigdata.aiwsbu.mapreduce.Question3.Reducer3;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,22 +32,10 @@ import java.util.stream.Collectors;
 
 public class Question1 {
 	
-//	private static Connection connection = null;
+
 	private static String tableS = "A_21805893:S";
 	private static String tableG = "A_21805893:G";
 	private static String tableC = "A_21805893:C";
-//    public void Question1() {
-//        try {
-//            connection = ConnectionFactory.createConnection(HBaseConfiguration.create());
-//        } catch (IOException e) {
-//            System.err.println("Failed to connect to HBase.");
-//            System.exit(0);
-//        }catch ( NullPointerException e) {
-//            System.err.println("NullPointerException Caught - Failed to connect to HBase.");
-//            System.exit(0);
-//        }
-//        
-//    }
 
 	//MAPPER
 	static class Mapper1 extends TableMapper<ImmutableBytesWritable, List<String>> {
@@ -297,11 +288,7 @@ public class Question1 {
 		
 		Job job = Job.getInstance(conf,"question1_job");
 		
-	    // Delete output if exists
-//	    FileSystem hdfs = FileSystem.get(conf);
-//	    if (hdfs.exists(new Path("/home/hadoop/out")))
-//	      hdfs.delete(new Path("/home/hadoop/out"), true);
-		FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/out"));
+
 	    Connection connection = ConnectionFactory.createConnection(conf);
 		//input
 		String id = "2015001000";// student id
@@ -325,32 +312,28 @@ public class Question1 {
         scanStudent.setCacheBlocks(false);  // don't set to true for MR jobs
         System.out.println("############# call Map With ################");
         System.out.println("Getting Student "+id+" at Table name " + tableStudent.getName());
-        
+        System.out.println(scanStudent);
         TableMapReduceUtil.initTableMapperJob(
-        		tableStudent.getName(),
-        		scanStudent,
-        		Mapper1.class,
-        		ImmutableBytesWritable.class,
-        		IntWritable.class, job);
+        		tableStudent.getName(), // input HBase table name
+        		scanStudent, // Scan instance to control CF and attribute selection
+        		Mapper1.class, // mapper
+        		ImmutableBytesWritable.class,// mapper output key
+        		List.class, job);// mapper output value
         
         job.setJarByClass(Question1.class);        
-		
-		
-        job.setOutputKeyClass(ImmutableBytesWritable.class);
-        job.setOutputValueClass(List.class);
-	    
-	    //job.setMapOutputKeyClass(TextOutputFormat.class);
-	    //job.setMapOutputValueClass(TextOutputFormat.class);
-	    
-	    
-	    //job.setOutputFormatClass();
+        job.getOutputFormatClass();
+		//job.setOutputFormatClass(NullOutputFormat.class);
 	    
 //        TableMapReduceUtil.initTableReducerJob(
 //        		id,
 //        		Reducer1.class,        		
 //        		job);
         //TableMapReduceUtil.initTableReducerJob(tableStudent, Reducer1.class, job);
-
+	    // Delete output if exists
+	    FileSystem hdfs = FileSystem.get(conf);
+	    if (hdfs.exists(new Path("file:///localhost:9000/home/hadoop/out")))
+	      hdfs.delete(new Path("file:///localhost:9000/home/hadoop/out"), true);
+		FileOutputFormat.setOutputPath(job, new Path("file:///localhost:9000/home/hadoop/out"));
         
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
