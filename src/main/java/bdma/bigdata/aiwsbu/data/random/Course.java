@@ -44,8 +44,13 @@ public class Course {
                     int serial = i + 1;
                     for (int n = 0; n < Random.getInteger(0, 5); ++n) {
                         int year = Random.getInteger(Configuration.yearStart, Configuration.yearStop);
-                        pool.add(new Course(semester, 'A', serial, year).setInstructors(year));
+                    	pool.add(new Course(semester, 'A', serial, year).setInstructors(year));
                         poolIndexA.add(index++);
+//                        for (int year = Configuration.yearStart; year < Configuration.yearStop+1; year++) {
+//                        	pool.add(new Course(semester, 'A', serial, year).setInstructors(year));
+//                            poolIndexA.add(index++);
+//						}
+                        
                     }
                 }
             }
