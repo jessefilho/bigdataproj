@@ -1,6 +1,7 @@
 package bdma.bigdata.aiwsbu.mapreduce;
 
 
+import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -65,10 +66,6 @@ public class Question1 {
     		Scan scanGrades = new Scan();    	
     		scanGrades.addColumn(Bytes.toBytes("#"),Bytes.toBytes("G"));
     		ResultScanner scannerG = tableGrade.getScanner(scanGrades);
-
-    		
-    		Scan scanStudents = new Scan(values.getRow());
-        	ResultScanner scannerS = tableStudent.getScanner(scanStudents);
         	
 //        	for (Result iStudent = scannerS.next(); iStudent != null; iStudent = scannerS.next()) { // Start For iStudent
 //        		System.out.println(Bytes.toString(iStudent.getRow()));
@@ -166,13 +163,13 @@ public class Question1 {
     			    		value = value+"none"+"/";
         			    }else {
         			    	//semesterFirst.add(1, Bytes.toString(nameCourse_byte));
-        			    	value = value+Bytes.toString(nameCourse_byte)+"/";
+        			    	value = value+Bytes.toString(nameCourse_byte).replace(" ",";")+"/";
         			    }
     			    	//semesterFirst.add(2,String.valueOf(grades));//Grades values
     			    	value = value+String.valueOf(grades);
     			    	
     			    	System.out.println(key);
-    			    	System.out.println(value);	
+    			    	System.out.println(value);
     			    	try {
     			    		StringTokenizer itr = new StringTokenizer(key.replace(" ", ";"));
 	    				      while (itr.hasMoreTokens()) {
@@ -200,23 +197,48 @@ public class Question1 {
 	
 	// REDUCER
 	//public static class Reducer1 extends TableReducer<ImmutableBytesWritable, IntWritable, ImmutableBytesWritable>
-	public static class Reducer1 extends TableReducer<Text,Text,String> {
+	public static class Reducer1 extends TableReducer<Text,Text,ImmutableBytesWritable> {
 
         public void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
-        	try {
-				
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-        	System.out.println("#### REDUCE ####");
-        	System.out.println(key +" "+values);
-        	//context.write();
         	
-//            int sum = 0;
-//            for (IntWritable val : values) {
-//                sum += val.get();
-//            }
+        	System.out.println("#### REDUCE ####");
+        	//System.out.println(key +" "+values);
+        	
+        	
+           
+            
+            String key_concated = Bytes.toString(key.getBytes());
+            //System.out.println(key_concated.split("/")[0]);
+            
+            Put put = new Put(key_concated.split("/")[0].getBytes());
+            
+            
+            
+
+        	put.addImmutable(Bytes.toBytes("S"), Bytes.toBytes("NAME"), Bytes.toBytes(key_concated.split("/")[1].replace(";", " ")));
+            put.addImmutable(Bytes.toBytes("S"), Bytes.toBytes("EMAIL"), Bytes.toBytes(key_concated.split("/")[2]));
+            put.addImmutable(Bytes.toBytes("S"), Bytes.toBytes("SEMESTER"), Bytes.toBytes(key_concated.split("/")[3]));
+            for ( Text val : values) {
+            	//System.out.println(key);
+            	String text_concated = Bytes.toString(val.getBytes());
+            	
+            	
+            	String c_semester = text_concated.split("/")[0];
+            	String c_name = text_concated.split("/")[1].replace(";"," ");
+            	String s_grade = text_concated.split("/")[2].substring(0,4);
+            	
+            	
+            	
+                put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("CODE"), Bytes.toBytes(c_semester));
+                put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("NAME"), Bytes.toBytes(c_name));
+                put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("GRADE"), Bytes.toBytes(s_grade));
+            }
+            
+            context.write(null, put);
+            
+            
+            
 //            
 //            Put put = new Put(key.toString().getBytes());
 //            put.addImmutable(Bytes.toBytes("details"), Bytes.toBytes("total"), Bytes.toBytes(sum));
@@ -234,8 +256,32 @@ public class Question1 {
 		
 	    Connection connection = ConnectionFactory.createConnection(conf);		
 		Table tableStudent = connection.getTable(TableName.valueOf(tableS));
-
-        Scan scanStudent = new Scan("2001000002".getBytes(),"2001000003".getBytes());
+		
+		//Create Table
+		TableName tableNameQ1 = TableName.valueOf("A_21805893:Q1");
+		Admin hba = connection.getAdmin();
+		HTableDescriptor tableDescriptor = new HTableDescriptor(tableNameQ1);
+		tableDescriptor.addFamily(new HColumnDescriptor("S"));
+    	tableDescriptor.addFamily(new HColumnDescriptor("C"));
+		
+	    if (hba.tableExists(tableNameQ1) == true) {	    	
+	    	hba.disableTable(tableNameQ1);
+    		System.out.println("Table disable "+ tableNameQ1);
+    		hba.deleteTable(tableNameQ1);
+    		System.out.println("Table delete "+ tableNameQ1);		
+	    	
+	    }else { 	
+	    		
+		        hba.createTable(tableDescriptor);
+		        System.out.println("Table created "+ tableNameQ1);
+		        }
+	    
+	    if (hba.tableExists(tableNameQ1) == false) {
+			hba.createTable(tableDescriptor);
+			System.out.println("Table created "+ tableNameQ1);
+	    }
+	    //"2001000291".getBytes(),"2001000294".getBytes()
+        Scan scanStudent = new Scan();
         scanStudent.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
         scanStudent.setCacheBlocks(false);  // don't set to true for MR jobs
         
@@ -247,21 +293,18 @@ public class Question1 {
         		Text.class,
         		job);// mapper output value
         
-        job.setJarByClass(Question1.class);
-        job.setCombinerClass(Reducer1.class);
-        job.setReducerClass(Reducer1.class);
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(FloatWritable.class);
+//        job.setJarByClass(Question1.class);
+//        job.setCombinerClass(Reducer1.class);
+//        job.setReducerClass(Reducer1.class);
+//        job.setOutputKeyClass(Text.class);
+//        job.setOutputValueClass(FloatWritable.class);
         //job.setOutputFormatClass(NullOutputFormat.class);
-//        TableMapReduceUtil.initTableReducerJob(
-//        		targetTable,      // output table
-//        		null,             // reducer class
-//        		job);
-//        TableMapReduceUtil.initTableReducerJob(
-//        		id,
-//        		Reducer1.class,        		
-//        		job);
-        //TableMapReduceUtil.initTableReducerJob(tableStudent, Reducer1.class, job);
+        
+        TableMapReduceUtil.initTableReducerJob(
+        		"A_21805893:Q1",      // output table
+        		Reducer1.class,             // reducer class
+        		job);
+
 	    // Delete output if exists
 	    FileSystem hdfs = FileSystem.get(conf);
 	    if (hdfs.exists(new Path("file:///localhost:9000/home/hadoop/out")))
