@@ -20,7 +20,9 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.omg.CORBA.portable.ValueOutputStream;
 
-import bdma.bigdata.aiwsbu.mapreduce.Question3.Mapper3;
+import com.sun.org.apache.commons.logging.LogFactory;
+
+
 import bdma.bigdata.aiwsbu.mapreduce.Question3.Reducer3;
 
 import java.io.IOException;
@@ -40,6 +42,7 @@ public class Question1 {
 	private static String tableS = "A_21805893:S";
 	private static String tableG = "A_21805893:G";
 	private static String tableC = "A_21805893:C";
+	
 
 	//MAPPER
 	static class Mapper1 extends TableMapper<Text, Text> {
@@ -282,8 +285,11 @@ public class Question1 {
 	    }
 	    //"2001000291".getBytes(),"2001000294".getBytes()
         Scan scanStudent = new Scan();
+        job.setJarByClass(Question1.class);
         scanStudent.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
         scanStudent.setCacheBlocks(false);  // don't set to true for MR jobs
+        
+        job.setJarByClass(Question1.class);
         
         TableMapReduceUtil.initTableMapperJob(
         		tableStudent.getName(), // input HBase table name
@@ -292,8 +298,8 @@ public class Question1 {
         		Text.class,// mapper output key
         		Text.class,
         		job);// mapper output value
-        
-//        job.setJarByClass(Question1.class);
+        job.setNumReduceTasks(1);
+         
 //        job.setCombinerClass(Reducer1.class);
 //        job.setReducerClass(Reducer1.class);
 //        job.setOutputKeyClass(Text.class);
