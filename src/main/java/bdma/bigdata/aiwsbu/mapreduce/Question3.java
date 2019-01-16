@@ -72,16 +72,19 @@ public class Question3 {
     		Table tableCourse = connection.getTable(TableName.valueOf(tableC));
     		Scan scanCourses = new Scan();    	
     		scanCourses.addColumn(Bytes.toBytes("#"),Bytes.toBytes("N"));
-    		ResultScanner scannerC = tableCourse.getScanner(scanCourses);
+    		ResultScanner scannerC = tableCourse.getScanner(scanCourses);   		
     		
-    		int count = 0;
-        	for (Cell cell : value.rawCells()){ // start for cell to get each set from scan
-        		System.out.println(count++);
-        		String str = new String(CellUtil.cloneRow(cell).clone());        		
-        		String [] ue_course = str.split("/");// Split Row        		
-        		//System.out.println(ue_course[0]);// Get code UE
+    		String str = Bytes.toString(value.getRow());        		
+    		String [] ue_course = str.split("/");// Split Row
+    		//String courseName = Bytes.toString(value.getValue(family, qualifier));
+    		
+//        	for (Cell cell : value.rawCells()){ // start for cell to get each set from scan
+//        		System.out.println(count++);
+//        		String str = new String(CellUtil.cloneRow(cell).clone());        		
+//        		String [] ue_course = str.split("/");// Split Row        		
+//        		//System.out.println(ue_course[0]);// Get code UE
         		
-        		String courseName = Bytes.toString(CellUtil.cloneValue(cell));
+//        		String courseName = Bytes.toString(CellUtil.cloneValue(cell));
         		
         		
     		for (Result iC = scannerC.next(); iC != null; iC = scannerC.next()) {//Start FOR iC
@@ -89,7 +92,7 @@ public class Question3 {
     			if (ue_course[0].equals(Bytes.toString(iC.getRow()).split("/")[0])) {
     				String courseNameFromScan = Bytes.toString(iC.getValue(Bytes.toBytes("#"),Bytes.toBytes("N")));
     				//key = courseNameFromScan;//ue_course[0]+"/"+courseNameFromScan;    			
-    				key = ue_course[0]+"/"+courseNameFromScan;
+    				key = str+"/"+courseNameFromScan;
 		    		for (Result iG = scannerG.next(); iG != null; iG = scannerG.next()) {//Start FOR iG
 		    			
 		    			String ueFromGrades = Bytes.toString(iG.getRow()).split("/")[2];
@@ -117,7 +120,7 @@ public class Question3 {
 		    			
 		    				
 		    		}//End FOR iG
-    			} // end for cell 
+//    			} // end for cell 
 //		    		System.out.println(key);
 //		    		System.out.println(gradesList);
 //		    		try {
@@ -156,19 +159,28 @@ public class Question3 {
         	
         	
         	String key_concated = Bytes.toString(key.getBytes());            
-            String course_name = key_concated.split("/")[1];
+            String course_name = key_concated.split("/")[2];
+            String key_row = key_concated.split("/")[0] +"/"+key_concated.split("/")[1];
             
-        	int count = 0;
-        	float sum = 0;
+            float count = 0;
+        	//float sum = 0;
+        	float graded = 0;
         	for (FloatWritable val : values) {
-              sum += val.get();
+        		
+              //sum += val.get();
+              if(val.get() >= 10) {
+            	  graded++;
+              }
               count++;
-          }
-        	System.out.println("key:'"+key_concated.split("/")[0]+ "' course name: '"+course_name.replace(";"," ")+"' rate: '"+sum/count+"'");
+        	}       	
+        	       	
+        	Float rate = graded/count;        	
+        	
+        	System.out.println("key:'"+key_row+ "' course name: '"+course_name.replace(";"," ")+"' rate: '"+rate+"'");
         	System.out.println("$$$$ PUT $$$$");
-        	Put put = new Put(key_concated.split("/")[0].getBytes());
+        	Put put = new Put(key_row.getBytes());
             put.addImmutable(Bytes.toBytes("#"), Bytes.toBytes("NAME"), Bytes.toBytes(course_name.replace(";"," ")));
-            put.addImmutable(Bytes.toBytes("#"), Bytes.toBytes("RATE"), Bytes.toBytes(Float.toString(sum/count)));
+            put.addImmutable(Bytes.toBytes("#"), Bytes.toBytes("RATE"), Bytes.toBytes(Float.toString(rate)));
 
             context.write(null,put);
         	
@@ -211,13 +223,15 @@ public class Question3 {
 			    }
 
 			    
-		//"S01A001/7984".getBytes(),"S01A010/7984".getBytes()
-        Scan scanCourse = new Scan();
+		//"S01A001/7984".getBytes(),"S01A005/7982".getBytes()  S01B025/7998 
+	    System.out.println("############# call Map With limit number row a cause of hardware host limitations ################");
+	    System.out.println("############# FROM S01A001/7984 TO S02B015/7987 ################");
+        Scan scanCourse = new Scan("S01A001/7984".getBytes(),"S02B015/7987".getBytes());
         
         job.setJarByClass(Question3.class);
         scanCourse.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
         scanCourse.setCacheBlocks(false);  // don't set to true for MR jobs
-        System.out.println("############# call Map With ################");
+        
 //        System.out.println("Getting Course "+id+" at Table name " + tableCourse.getName());
         
         TableMapReduceUtil.initTableMapperJob(
@@ -239,14 +253,10 @@ public class Question3 {
 //        job.setOutputValueClass(FloatWritable.class);
 		//job.setOutputFormatClass(NullOutputFormat.class); // because we aren't emitting anything from mapper
         
-        FileOutputFormat.getOutputPath(job);
-        FileOutputFormat.setOutputPath(job, new Path("file:///localhost:9000/home/hadoop/out"));
+//        FileOutputFormat.getOutputPath(job);
+//        FileOutputFormat.setOutputPath(job, new Path("file:///localhost:9000/home/hadoop/out"));
 	    
-//        TableMapReduceUtil.initTableReducerJob(
-//        		id,
-//        		Reducer2.class,        		
-//        		job);
-        //TableMapReduceUtil.initTableReducerJob(tableStudent, Reducer1.class, job);
+
 
         
       //System.exit(job.waitForCompletion(true) ? 0 : 1);
