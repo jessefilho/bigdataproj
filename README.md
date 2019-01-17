@@ -25,6 +25,30 @@ $ `java -cp  'hbase classpath' :bigdataproj.jar:load_lib/* bdma.bigdata.aiwsbu.d
 load_lib/ is a directory with all dependecies of [hadoop](https://mvnrepository.com/artifact/org.apache.hadoop), [HBase](https://mvnrepository.com/search?q=HBase%20) and [javafaker](https://mvnrepository.com/artifact/com.github.javafaker/javafaker).
 
 
+**Services start:**
+
+After instalation of hadoop and hbase;
+
+`$ start-all.sh`
+`$ start-hbase.sh`
+`$ hbase-daemon.sh start thrift`
+
+Run Python WEB-SERVER:
+<YOUR LOCAL DIR>/bigdata/webserve_hb`$ python webserve.py`
+
+If some message like `Pipe is broken` appears, please re-running web-server, because it is a lean ws for test.
+
+
+***Questions for test this project:***
+
+Question 1 API REST e.i:
+http://localhost:8080/aiwsbu/v1/students/2017000306/transcripts/L2
+
+Question 2 API REST e.i:
+http://localhost:8080/aiwsbu/v1/rates/S07
+
+Question 3 API REST e.i:
+http://localhost:8080/aiwsbu/v1/courses/S01A005/rates
 
 References
 -
@@ -34,4 +58,9 @@ https://www.tutorialspoint.com/hbase/hbase_installation.htm
 https://www.youtube.com/watch?v=bYaxXIRakxM
 https://mvnrepository.com/
 https://stackedit.io/
-
+http://hbase.apache.org/0.94/book/mapreduce.example.html
+https://gist.github.com/iaverin/f81720df9ed37a49ecee6341e4d5c0c6
+https://stackoverflow.com/questions/21073041/url-route-matching-with-regex
+http://txt2re.com/
+https://docs.python.org/2/library/re.html
+https://happybase.readthedocs.io/en/latest/index.html

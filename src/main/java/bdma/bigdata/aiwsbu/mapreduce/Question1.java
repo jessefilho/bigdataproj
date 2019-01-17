@@ -99,7 +99,9 @@ public class Question1 {
 	    			
 	    			key = key+email+"/";
 	    		}
-	    		
+//	    		System.out.println("########");
+//	    		System.out.println(key);
+//	    		System.out.println(Integer.valueOf(Program));
 	    		switch(Integer.valueOf(Program)) {
 	    		  case 1: // L1	    		    
 	    			  key = key+"L"+Program;
@@ -119,10 +121,11 @@ public class Question1 {
 	      		    
 	    			  key = key+"M2";
 	      		    break;
-	    		  default:
-	    		   
+	    		  default:	    		   
 	    			  key = key+"none";
 	    		}
+//	    		System.out.println(key);
+//	    		System.out.println(Integer.valueOf(Program));
     		
     		for (Result iG = scannerG.next(); iG != null; iG = scannerG.next()) {
     			String value = null;
@@ -170,9 +173,9 @@ public class Question1 {
         			    }
     			    	//semesterFirst.add(2,String.valueOf(grades));//Grades values
     			    	value = value+String.valueOf(grades);
-    			    	
-    			    	System.out.println(key);
-    			    	System.out.println(value);
+//    			    	System.out.println("$$$$$$$$$$$$$$");
+//    			    	System.out.println(key);
+//    			    	System.out.println(value);
     			    	try {
     			    		StringTokenizer itr = new StringTokenizer(key.replace(" ", ";"));
 	    				      while (itr.hasMoreTokens()) {
@@ -207,47 +210,29 @@ public class Question1 {
         	
         	System.out.println("#### REDUCE ####");
         	//System.out.println(key +" "+values);
-        	
-        	
-           
-            
-            String key_concated = Bytes.toString(key.getBytes());
-            //System.out.println(key_concated.split("/")[0]);
+        	String key_concated = Bytes.toString(key.getBytes());
+        	System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            System.out.println(key_concated.split("/")[0]);
+            System.out.println(key_concated.split("/")[2]);
+            System.out.println(key_concated.split("/")[3].substring(0,2));
             
             Put put = new Put(key_concated.split("/")[0].getBytes());
-            
-            
-            
-
         	put.addImmutable(Bytes.toBytes("S"), Bytes.toBytes("NAME"), Bytes.toBytes(key_concated.split("/")[1].replace(";", " ")));
             put.addImmutable(Bytes.toBytes("S"), Bytes.toBytes("EMAIL"), Bytes.toBytes(key_concated.split("/")[2]));
-            put.addImmutable(Bytes.toBytes("S"), Bytes.toBytes("SEMESTER"), Bytes.toBytes(key_concated.split("/")[3]));
+            put.addImmutable(Bytes.toBytes("S"), Bytes.toBytes("PROGRAM"), Bytes.toBytes(key_concated.split("/")[3].substring(0,2)));
             for ( Text val : values) {
             	//System.out.println(key);
             	String text_concated = Bytes.toString(val.getBytes());
-            	
-            	
             	String c_semester = text_concated.split("/")[0];
             	String c_name = text_concated.split("/")[1].replace(";"," ");
             	String s_grade = text_concated.split("/")[2].substring(0,4);
-            	
-            	
-            	
-                put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("CODE"), Bytes.toBytes(c_semester));
+            	put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("CODE"), Bytes.toBytes(c_semester));
                 put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("NAME"), Bytes.toBytes(c_name));
                 put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("GRADE"), Bytes.toBytes(s_grade));
             }
             
             context.write(null, put);
-            
-            
-            
-//            
-//            Put put = new Put(key.toString().getBytes());
-//            put.addImmutable(Bytes.toBytes("details"), Bytes.toBytes("total"), Bytes.toBytes(sum));
-//            System.out.println(String.format("stats :   key : %d,  count : %d", Bytes.toInt(key.toString().getBytes()), sum));
-//            //context.write(key, put);
-//            context.write(key, put);
+
         }
     }
 	
@@ -283,8 +268,10 @@ public class Question1 {
 			hba.createTable(tableDescriptor);
 			System.out.println("Table created "+ tableNameQ1);
 	    }
-	    //"2001000291".getBytes(),"2001000294".getBytes()
-        Scan scanStudent = new Scan();
+	    System.out.println("############# call Map With limit number row a cause of hardware host limitations ################");
+	    System.out.println("############# FROM 2017000291 TO 2017000315 ################");
+	    //"2017000291".getBytes(),"2017000315".getBytes()
+        Scan scanStudent = new Scan("2017000291".getBytes(),"2017000308".getBytes());
         job.setJarByClass(Question1.class);
         scanStudent.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
         scanStudent.setCacheBlocks(false);  // don't set to true for MR jobs

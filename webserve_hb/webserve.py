@@ -32,15 +32,17 @@ sys.setdefaultencoding('utf8')
 
 here = os.path.dirname(os.path.realpath(__file__))
 
-records = {"Hello"}
+records = {}
 
 
+#Question1
+def get_question1(handler):
+    print len(handler.path)
 
-def get_test(handler):
-    key = urllib.unquote(handler.path[12:])
-    print type(key)
-    #return bdproj.test(str(key))
+    id_student = urllib.unquote(handler.path[20:-15]) #2017000304
+    program = urllib.unquote(handler.path[43:])
 
+    return bdproj.question1(id_student,program)
 
 #Question2
 def get_question2(handler):
@@ -52,7 +54,7 @@ def get_question2(handler):
 #Question3
 def get_question3(handler):
     print len(handler.path)
-    key = urllib.unquote(handler.path[19:])
+    key = urllib.unquote(handler.path[19:-6])
     print key
     return bdproj.question3(key)
 
@@ -116,9 +118,10 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             r'^/records$': {'GET': get_records, 'media_type': 'application/json'},
 
             #Big Data Projet URI
-            r'^/test/{id}/rates': {'GET': get_test, 'media_type': 'application/json', 'params':'id'},
-            r'^/aiwsbu/v1/courses/': {'GET': get_question3, 'media_type': 'application/json'},
-            r'^/aiwsbu/v1/rates/': {'GET': get_question2, 'media_type': 'application/json'},
+
+            r'^/aiwsbu/v1/students/([^/])+/transcripts/([^/])+$': {'GET': get_question1, 'media_type': 'application/json'},
+            r'^/aiwsbu/v1/rates/([^/])+$': {'GET': get_question2, 'media_type': 'application/json'},
+            r'^/aiwsbu/v1/courses/([^/])+/rates$': {'GET': get_question3, 'media_type': 'application/json'},
 
             r'^/record/': {'GET': get_record, 'PUT': set_record, 'DELETE': delete_record,
                            'media_type': 'application/json'}}
@@ -204,7 +207,10 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.wfile.write('Not found\n')
 
     def get_route(self):
+        print self
         for path, route in self.routes.iteritems():
+            print path
+            print route
             if re.match(path, self.path):
                 return route
         return None
