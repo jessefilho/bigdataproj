@@ -226,7 +226,8 @@ public class Question3 {
 		//"S01A001/7984".getBytes(),"S01A005/7982".getBytes()  S01B025/7998 
 	    System.out.println("############# call Map With limit number row a cause of hardware host limitations ################");
 	    System.out.println("############# FROM S01A001/7984 TO S02B015/7987 ################");
-        Scan scanCourse = new Scan("S01A001/7984".getBytes(),"S02B015/7987".getBytes());
+        //"S01A001/7984".getBytes(),"S02B015/7987".getBytes()
+	    Scan scanCourse = new Scan();
         
         job.setJarByClass(Question3.class);
         scanCourse.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs

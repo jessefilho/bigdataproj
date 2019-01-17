@@ -298,25 +298,12 @@ public class Question1 {
         		Text.class,// mapper output key
         		Text.class,
         		job);// mapper output value
-        job.setNumReduceTasks(1);
-         
-//        job.setCombinerClass(Reducer1.class);
-//        job.setReducerClass(Reducer1.class);
-//        job.setOutputKeyClass(Text.class);
-//        job.setOutputValueClass(FloatWritable.class);
-        //job.setOutputFormatClass(NullOutputFormat.class);
-        
+ 
         TableMapReduceUtil.initTableReducerJob(
         		"A_21805893:Q1",      // output table
         		Reducer1.class,             // reducer class
         		job);
-
-	    // Delete output if exists
-	    FileSystem hdfs = FileSystem.get(conf);
-	    if (hdfs.exists(new Path("file:///localhost:9000/home/hadoop/out")))
-	      hdfs.delete(new Path("file:///localhost:9000/home/hadoop/out"), true);
-		FileOutputFormat.setOutputPath(job, new Path("file:///localhost:9000/home/hadoop/out"));
-        
+  
 		//System.exit(job.waitForCompletion(true) ? 0 : 1);
 		boolean b = job.waitForCompletion(true);
 		if (!b) {

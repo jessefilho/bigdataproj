@@ -42,6 +42,12 @@ def get_test(handler):
     #return bdproj.test(str(key))
 
 
+#Question2
+def get_question2(handler):
+    print len(handler.path)
+    key = urllib.unquote(handler.path[17:])
+    print key
+    return bdproj.question2(key)
 
 #Question3
 def get_question3(handler):
@@ -112,6 +118,7 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             #Big Data Projet URI
             r'^/test/{id}/rates': {'GET': get_test, 'media_type': 'application/json', 'params':'id'},
             r'^/aiwsbu/v1/courses/': {'GET': get_question3, 'media_type': 'application/json'},
+            r'^/aiwsbu/v1/rates/': {'GET': get_question2, 'media_type': 'application/json'},
 
             r'^/record/': {'GET': get_record, 'PUT': set_record, 'DELETE': delete_record,
                            'media_type': 'application/json'}}
@@ -122,7 +129,6 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.handle_method('HEAD')
 
     def do_GET(self):
-        print "Aqui"
         self.handle_method('GET')
 
     def do_POST(self):
