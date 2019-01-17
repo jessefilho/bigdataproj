@@ -59,7 +59,7 @@ public class Question4 {
 				Context context) throws InterruptedException, IOException {
 			System.out.println("#### MAP ####");
 			//System.out.println(value);
-			System.out.println(Bytes.toFloat(value.getValue(Bytes.toBytes("#"),Bytes.toBytes("G"))));
+			//System.out.println(Bytes.toFloat(value.getValue(Bytes.toBytes("#"),Bytes.toBytes("G"))));
 
 			String key = null;
 			System.out.println(Bytes.toString(row.get()));
@@ -90,7 +90,7 @@ public class Question4 {
 			ResultScanner scannerC = tableCourse.getScanner(scanCourses);
 			
 			for (Result iC = scannerC.next(); iC != null; iC = scannerC.next()) {//Start FOR iC
-				System.out.println(Bytes.toString(iC.getValue(Bytes.toBytes("#"),Bytes.toBytes("N"))));
+				//System.out.println(Bytes.toString(iC.getValue(Bytes.toBytes("#"),Bytes.toBytes("N"))));
 				String courseNameFromScan = Bytes.toString(iC.getValue(Bytes.toBytes("#"),Bytes.toBytes("N")));
 				key = key+"/"+courseNameFromScan.replace(" ", ";");   			
 				
@@ -126,16 +126,11 @@ public class Question4 {
 				Context context)
 						throws IOException, InterruptedException {
 			System.out.println("#### REDUCE ####");
-			//        	System.out.println(key +" "+values);
-			//        	System.out.println(Bytes.toString(key.getBytes()).replace(";"," "));
-			System.out.println(key.toString());
-			//        	System.out.println(values.iterator().next());
-
 
 			//S04A009/2002/name
 			String key_concated = Bytes.toString(key.getBytes());            
 			String key_row = key_concated.split("/")[0]+"/"+key_concated.split("/")[1];
-			String course_name = key_concated.split("/")[2];
+			String course_name = key_concated.split("/")[2].replace(";"," ");
 
 			float count = 0;
 			//float sum = 0;
@@ -150,14 +145,18 @@ public class Question4 {
 			}       	
 
 			Float rate = graded/count;        	
+			try {
+				System.out.println("key:'"+key_row+ "' course name: '"+course_name+"' rate: '"+rate+"'");
+				System.out.println("$$$$ PUT $$$$");
+				Put put = new Put(key_row.getBytes());
+				put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("NAME"), Bytes.toBytes(course_name));
+				put.addImmutable(Bytes.toBytes("#"), Bytes.toBytes("RATE"), Bytes.toBytes(Float.toString(rate)));
 
-			System.out.println("key:'"+key_row+ "' course name: '"+course_name.replace(";"," ")+"' rate: '"+rate+"'");
-			System.out.println("$$$$ PUT $$$$");
-			Put put = new Put(key_row.getBytes());
-			put.addImmutable(Bytes.toBytes("C"), Bytes.toBytes("NAME"), Bytes.toBytes(course_name.replace(";"," ")));
-			put.addImmutable(Bytes.toBytes("#"), Bytes.toBytes("RATE"), Bytes.toBytes(Float.toString(rate)));
-
-			context.write(null,put);
+				context.write(null,put);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			
 
 		}
 	}
@@ -200,9 +199,9 @@ public class Question4 {
 
 		//"S01A001/7984".getBytes(),"S01A005/7982".getBytes()  S01B025/7998 
 		System.out.println("############# call Map With limit number row a cause of hardware host limitations ################");
-		System.out.println("############# FROM S01A001/7984 TO S02B015/7987 ################");
+		System.out.println("############# FROM 2017/012001000016/S04A009 TO 2018/012001000016/S04A009 ################");
 		//"S01A001/7984".getBytes(),"2002/012001000016/S04A009".getBytes()
-		Scan scanGrade = new Scan();
+		Scan scanGrade = new Scan("2015/082007000996/S07B033".getBytes(), "2018/012001000016/S04A009".getBytes());
 
 		job.setJarByClass(Question4.class);
 		scanGrade.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
@@ -217,7 +216,7 @@ public class Question4 {
 				Text.class, // mapper output key
 				FloatWritable.class, // mapper output value
 				job);
-		job.setCombinerClass(Reducer3.class);
+
 		TableMapReduceUtil.initTableReducerJob(
 				tableNameQ4.getNameAsString(),      // output table
 				Reducer4.class,             // reducer class

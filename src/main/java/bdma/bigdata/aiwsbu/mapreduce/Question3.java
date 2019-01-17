@@ -227,19 +227,7 @@ public class Question3 {
         		"A_21805893:Q3",      // output table
         		Reducer3.class,             // reducer class
         		job); 
-        
 
-
-//        job.setOutputKeyClass(Text.class);
-//        job.setOutputValueClass(FloatWritable.class);
-		//job.setOutputFormatClass(NullOutputFormat.class); // because we aren't emitting anything from mapper
-        
-//        FileOutputFormat.getOutputPath(job);
-//        FileOutputFormat.setOutputPath(job, new Path("file:///localhost:9000/home/hadoop/out"));
-	    
-
-
-        
       //System.exit(job.waitForCompletion(true) ? 0 : 1);
       		boolean b = job.waitForCompletion(true);
       		if (!b) {
@@ -248,11 +236,3 @@ public class Question3 {
     }
 }
 
-
-//Pour savoir le taux de réussite d’une UE depuis sa création, par rapport, au cas où, à ses
-//différents noms.
-///Aiwsbu/v1/courses/{id}/rates
-//Le serveur retournera une chaîne JSON contenant simplement un nombre, par exemple
-//(0.88 pour 88%) :
-//[{"Name":"HPC","Rate":"0.183"},{"Name":"Big Data","Rate":"0.88"},...]
-//Si l’UE n’existe pas, le serveur retournera une erreur NOT FOUND
