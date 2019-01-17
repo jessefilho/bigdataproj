@@ -79,9 +79,23 @@ def question3(id_ue):
 
     #MODEL (0.88 pour 88%) :[{"Name": "HPC", "Rate": "0.183"}, {"Name": "Big Data", "Rate": "0.88"}, ...]
 
+def question4(id_ue,id_year):
+    prfix = b'%s' %(id_ue)
+    table = connection.table(b'A_21805893:Q4')
+    rate = []
+    q4 = []
+    q4_result = []
+    year = id_year
+
+    for key, data in table.scan(row_prefix=prfix+"/"+year):
+        q4_result.append(dict(Name = data.get(b'C:NAME'), Rate = float(data.get(b'#:RATE'))))
+        rate.append(float(data.get(b'#:RATE')))
+
+    q4.append("("+str(max(rate))+" pour "+str(max(rate)*100)+"% )")
+    q4.append(q4_result);
+    return json.dumps(q4,sort_keys=True, indent=4)
 
 
 
 
-
-#print question1();
+#print question4();

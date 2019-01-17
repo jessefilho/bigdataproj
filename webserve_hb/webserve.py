@@ -54,9 +54,18 @@ def get_question2(handler):
 #Question3
 def get_question3(handler):
     print len(handler.path)
-    key = urllib.unquote(handler.path[19:-6])
+    key = urllib.unquote(handler.path[19:-11])
     print key
     return bdproj.question3(key)
+
+#Question4
+def get_question4(handler):
+    print len(handler.path)
+    ue = urllib.unquote(handler.path[19:-11])
+    print ue
+    year =  urllib.unquote(handler.path[33:])
+    print year
+    return bdproj.question4(ue,year)
 
 def get_records(handler):
     return records
@@ -117,11 +126,12 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             r'^/$': {'file': 'web/index.html', 'media_type': 'text/html'},
             r'^/records$': {'GET': get_records, 'media_type': 'application/json'},
 
-            #Big Data Projet URI
+            #Big Data Projet URI /Aiwsbu/v1/courses/{id}/rates/{year}
 
             r'^/aiwsbu/v1/students/([^/])+/transcripts/([^/])+$': {'GET': get_question1, 'media_type': 'application/json'},
             r'^/aiwsbu/v1/rates/([^/])+$': {'GET': get_question2, 'media_type': 'application/json'},
             r'^/aiwsbu/v1/courses/([^/])+/rates$': {'GET': get_question3, 'media_type': 'application/json'},
+            r'^/aiwsbu/v1/courses/([^/])+/rates/([^/])+$': {'GET': get_question4,'media_type': 'application/json'},
 
             r'^/record/': {'GET': get_record, 'PUT': set_record, 'DELETE': delete_record,
                            'media_type': 'application/json'}}
