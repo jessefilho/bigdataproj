@@ -96,6 +96,20 @@ def question4(id_ue,id_year):
     return json.dumps(q4,sort_keys=True, indent=4)
 
 
+def question6(name_prof):
+    prfix = b'%s' %(name_prof)
+    table = connection.table(b'A_21805893:Q6')
+
+    q6 = []
+    q6_result = []
+
+    for key, data in table.scan(row_prefix=prfix):
+        q6_result.append(key.split("/")[1]+"/"+ str(9999 - int(key.split("/")[2])));
+        q6_result.append(dict(Name = data.get(b'C:NAME'), Rate = float(data.get(b'#:RATE'))))
 
 
-#print question4();
+
+    q6.append(q6_result);
+    return json.dumps(q6,sort_keys=True, indent=4)
+
+#print question6();

@@ -67,6 +67,14 @@ def get_question4(handler):
     print year
     return bdproj.question4(ue,year)
 
+#Question6
+def get_question6(handler):
+    print len(handler.path)
+    name_prof = urllib.unquote(handler.path[23:-6])
+    print name_prof
+
+    return bdproj.question6(name_prof)
+
 def get_records(handler):
     return records
 
@@ -132,6 +140,7 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             r'^/aiwsbu/v1/rates/([^/])+$': {'GET': get_question2, 'media_type': 'application/json'},
             r'^/aiwsbu/v1/courses/([^/])+/rates$': {'GET': get_question3, 'media_type': 'application/json'},
             r'^/aiwsbu/v1/courses/([^/])+/rates/([^/])+$': {'GET': get_question4,'media_type': 'application/json'},
+            r'^/aiwsbu/v1/instructors/([^/])+/rates$': {'GET': get_question6, 'media_type': 'application/json'},
 
             r'^/record/': {'GET': get_record, 'PUT': set_record, 'DELETE': delete_record,
                            'media_type': 'application/json'}}

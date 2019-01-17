@@ -222,7 +222,7 @@ public class Question3 {
         		Text.class, // mapper output key
         		FloatWritable.class, // mapper output value
         		job);
-        //job.setCombinerClass(Reducer3.class);
+
         TableMapReduceUtil.initTableReducerJob(
         		"A_21805893:Q3",      // output table
         		Reducer3.class,             // reducer class
