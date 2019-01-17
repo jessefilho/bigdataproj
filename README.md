@@ -1,6 +1,6 @@
 # Welcome to bigdataproj!
 
-This a little project of Master's degree at Tours University for Big Data, Cloud Computing et Services Web class. A project to practice and learn hbase manipulation, hadoop, mapreduce and REST
+This a little project from my Master's degree at Tours University for Big Data, Cloud Computing et Services Web class. A project to practice and learn hbase manipulation, hadoop, mapreduce and REST
 
 Members:
 *Akachi, Ines
@@ -29,9 +29,9 @@ load_lib/ is a directory with all dependecies of [hadoop](https://mvnrepository.
 
 After instalation of hadoop and hbase;
 
-`$ start-all.sh`
-`$ start-hbase.sh`
-`$ hbase-daemon.sh start thrift`
+`$ start-all.sh \ 
+ start-hbase.sh  \
+ hbase-daemon.sh start thrift`
 
 Run Python WEB-SERVER:
 <YOUR LOCAL DIR>/bigdata/webserve_hb`$ python webserve.py`

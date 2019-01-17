@@ -80,4 +80,8 @@ def question3(id_ue):
     #MODEL (0.88 pour 88%) :[{"Name": "HPC", "Rate": "0.183"}, {"Name": "Big Data", "Rate": "0.88"}, ...]
 
 
+
+
+
+
 #print question1();

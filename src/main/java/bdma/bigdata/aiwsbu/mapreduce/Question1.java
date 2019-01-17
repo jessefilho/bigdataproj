@@ -42,12 +42,22 @@ public class Question1 {
 	private static String tableS = "A_21805893:S";
 	private static String tableG = "A_21805893:G";
 	private static String tableC = "A_21805893:C";
-	
+	private static Connection connection = null;
+	public static void Setup() {
+        try {
+            connection = ConnectionFactory.createConnection(HBaseConfiguration.create());
+        } catch (IOException e) {
+            System.err.println("Failed to connect to HBase.");
+            System.exit(0);
+        }
+        
+    }
 
 	//MAPPER
 	static class Mapper1 extends TableMapper<Text, Text> {
 		private Text keyy = new Text();
-	    private Text valuee = new Text();
+	    private Text valuee = new Text();    
+	    
         public void map(ImmutableBytesWritable row,
         		Result values,
         		Context context) throws IOException, InterruptedException {
@@ -239,7 +249,9 @@ public class Question1 {
 	//MAIN 
 	public static void main(String[] args) throws Exception {
 		System.out.println("################# QUESTION 1 - START #################");
-		Configuration conf = HBaseConfiguration.create();		
+		Setup(); 
+
+		Configuration conf = connection.getConfiguration();		
 		Job job = Job.getInstance(conf,"question1_job");
 		
 	    Connection connection = ConnectionFactory.createConnection(conf);		

@@ -43,7 +43,16 @@ public class Question3 {
 	private static String tableG = "A_21805893:G";
 	private static String tableC = "A_21805893:C";
 	private static String tableS = "A_21805893:S";
+	private static Connection connection = null;
+	public static void Setup() {
+		try {
+			connection = ConnectionFactory.createConnection(HBaseConfiguration.create());
+		} catch (IOException e) {
+			System.err.println("Failed to connect to HBase.");
+			System.exit(0);
+		}
 
+	}
 	//MAPPER
 	public static class TokenizerMapper3 extends TableMapper<Text, FloatWritable> {
 		private final static FloatWritable gradess = new FloatWritable();
@@ -58,15 +67,12 @@ public class Question3 {
 
         	//Grades
         	// year/semesterstudent/course
-        	//2015/072012000123/S07A006
+        	//2015/072012000123/S07A006		
     		
-    		Configuration conf = HBaseConfiguration.create();
-        	Connection connection = ConnectionFactory.createConnection(conf);
     		Table tableGrade = connection.getTable(TableName.valueOf(tableG));
     		Scan scanGrades = new Scan();    	
     		scanGrades.addColumn(Bytes.toBytes("#"),Bytes.toBytes("G"));
-    		ResultScanner scannerG = tableGrade.getScanner(scanGrades);
-    		
+    		ResultScanner scannerG = tableGrade.getScanner(scanGrades);    		
     		
     		
     		Table tableCourse = connection.getTable(TableName.valueOf(tableC));
@@ -76,17 +82,7 @@ public class Question3 {
     		
     		String str = Bytes.toString(value.getRow());        		
     		String [] ue_course = str.split("/");// Split Row
-    		//String courseName = Bytes.toString(value.getValue(family, qualifier));
-    		
-//        	for (Cell cell : value.rawCells()){ // start for cell to get each set from scan
-//        		System.out.println(count++);
-//        		String str = new String(CellUtil.cloneRow(cell).clone());        		
-//        		String [] ue_course = str.split("/");// Split Row        		
-//        		//System.out.println(ue_course[0]);// Get code UE
-        		
-//        		String courseName = Bytes.toString(CellUtil.cloneValue(cell));
-        		
-        		
+ 		
     		for (Result iC = scannerC.next(); iC != null; iC = scannerC.next()) {//Start FOR iC
     			
     			if (ue_course[0].equals(Bytes.toString(iC.getRow()).split("/")[0])) {
@@ -121,23 +117,13 @@ public class Question3 {
 		    				
 		    		}//End FOR iG
 //    			} // end for cell 
-//		    		System.out.println(key);
-//		    		System.out.println(gradesList);
-//		    		try {
-//		                context.write(key, gradesList);
-//		            } catch (InterruptedException e) {
-//		                throw new IOException(e);
-//		            }
-//		    		gradesList = new ArrayList<>();
+
     			}// if ue from course
     			
     		}//End FOR iC    		
     		
     		}// End map
-        	
-        	
-        
-        
+ 
      } // END class Mapper1
     
 
@@ -155,9 +141,6 @@ public class Question3 {
 //        	System.out.println(Bytes.toString(key.getBytes()).replace(";"," "));
         	System.out.println(key.toString());
 //        	System.out.println(values.iterator().next());
-        	
-        	
-        	
         	String key_concated = Bytes.toString(key.getBytes());            
             String course_name = key_concated.split("/")[2];
             String key_row = key_concated.split("/")[0] +"/"+key_concated.split("/")[1];
@@ -190,13 +173,10 @@ public class Question3 {
 	//MAIN 
 	public static void main(String[] args) throws Exception {
 		System.out.println("################# QUESTION 3 - START #################");
-		Configuration conf = HBaseConfiguration.create();		
+		Setup();
+		Configuration conf = connection.getConfiguration();
 		Job job = Job.getInstance(conf,"question3_job");
-
 		
-	    Connection connection = ConnectionFactory.createConnection(conf);
-
-				
 		//Rules to Students
 		Table tableCourse = connection.getTable(TableName.valueOf(tableC));
 		//Create Table
