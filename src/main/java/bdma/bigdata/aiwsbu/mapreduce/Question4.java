@@ -201,7 +201,7 @@ public class Question4 {
 		System.out.println("############# call Map With limit number row a cause of hardware host limitations ################");
 		System.out.println("############# FROM 2017/012001000016/S04A009 TO 2018/012001000016/S04A009 ################");
 		//"S01A001/7984".getBytes(),"2002/012001000016/S04A009".getBytes()
-		Scan scanGrade = new Scan("2015/082007000996/S07B033".getBytes(), "2018/012001000016/S04A009".getBytes());
+		Scan scanGrade = new Scan();
 
 		job.setJarByClass(Question4.class);
 		scanGrade.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs

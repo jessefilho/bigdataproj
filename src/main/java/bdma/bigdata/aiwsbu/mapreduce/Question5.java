@@ -1,238 +1,331 @@
 package bdma.bigdata.aiwsbu.mapreduce;
 
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-
-import org.apache.hadoop.hbase.*;
-import org.apache.hadoop.hbase.client.*;
-import org.apache.hadoop.hbase.io.*;
-import org.apache.hadoop.hbase.mapreduce.*;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapred.FileOutputCommitter;
-import org.apache.hadoop.mapred.TextOutputFormat;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.OutputFormat;
-import org.apache.hadoop.mapreduce.Reducer.Context;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
-import org.omg.CORBA.portable.ValueOutputStream;
-
-import bdma.bigdata.aiwsbu.mapreduce.WordCount.IntSumReducer;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
+import org.apache.hadoop.hbase.mapreduce.TableMapper;
+import org.apache.hadoop.hbase.mapreduce.TableReducer;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper.Context;
 
 
 
 
 public class Question5 {
-
 	
 	private static String tableG = "A_21805893:G";
 	private static String tableC = "A_21805893:C";
-
-	//MAPPER
-	static class Mapper3 extends TableMapper<Text, FloatWritable> {
-		private final static FloatWritable gradess = new FloatWritable();
-	    private Text keyy = new Text();
-        public void map(ImmutableBytesWritable row,
-        		Result values,
-        		Context context) throws InterruptedException, IOException {
-        	System.out.println("#### MAP ####");
-        	System.out.println("Processing ...");
-        	
-//        	System.out.println(row);
-//        	System.out.println(values);
-//        	
-//        	System.out.println(Bytes.toString(values.getRow()));
-//        	System.out.println(values.getColumnCells(Bytes.toBytes("#"),Bytes.toBytes("N")));
-//        	System.out.println(values.getValue(Bytes.toBytes("#"),Bytes.toBytes("N")));
-        	
-        	String courseName = Bytes.toString(values.getValue(Bytes.toBytes("#"),Bytes.toBytes("N")));
-        	String[] ue_course = Bytes.toString(values.getRow()).split("/");
-        	List<Float> gradesList = new ArrayList<>();
-        	//List<List> eachGrades = new ArrayList<>();
-        	String key = null;
-
-        	//Grades
-        	// year/semesterstudent/course
-        	//2015/072012000123/S07A006
-    		System.out.print(" ...");
-    		Configuration conf = HBaseConfiguration.create();
-        	Connection connection = ConnectionFactory.createConnection(conf);
-    		Table tableGrade = connection.getTable(TableName.valueOf(tableG));
-    		Scan scanGrades = new Scan();    	
-    		scanGrades.addColumn(Bytes.toBytes("#"),Bytes.toBytes("G"));
-    		ResultScanner scannerG = tableGrade.getScanner(scanGrades);
-    		
-    		
-    		
-    		Table tableCourse = connection.getTable(TableName.valueOf(tableC));
-    		Scan scanCourses = new Scan();    	
-    		scanCourses.addColumn(Bytes.toBytes("#"),Bytes.toBytes("N"));
-    		ResultScanner scannerC = tableCourse.getScanner(scanCourses);
-    		
-    		
-    		for (Result iC = scannerC.next(); iC != null; iC = scannerC.next()) {//Start FOR iC
-    			
-    			if (ue_course[0].equals(Bytes.toString(iC.getRow()).split("/")[0])) {
-    				String courseNameFromScan = Bytes.toString(iC.getValue(Bytes.toBytes("#"),Bytes.toBytes("N")));
-    				key = courseNameFromScan;//ue_course[0]+"/"+courseNameFromScan;    			
-    				
-		    		for (Result iG = scannerG.next(); iG != null; iG = scannerG.next()) {//Start FOR iG
-		    			List<Cell> pointer = iG.getColumnCells(Bytes.toBytes("#"), Bytes.toBytes("G"));
-		    			String ueFromGrades = Bytes.toString(iG.getRow()).split("/")[2];
-		    			byte [] value_grades = iG.getValue(Bytes.toBytes("#"), Bytes.toBytes("G"));    			
-		    			Float grades = Float.valueOf(Bytes.toString(value_grades))/100;
-		    			
-		    			if (ue_course[0].equals(ueFromGrades)) {
-		    				//gradesList.add(grades);
-		    				gradess.set(grades);
-		    				
-		    				try {
-		    					StringTokenizer itr = new StringTokenizer(key.replace(" ", ";"));
-		    				      while (itr.hasMoreTokens()) {
-		    				    	  keyy.set(itr.nextToken());		    				    	  
-		    				    	  context.write(keyy,gradess);		    				    	  
-		    				      }
-				                
-				                
-				            } catch (InterruptedException e) {
-				                throw new IOException(e);
-				            }
-						}
-		    			
-		    				
-		    		}//End FOR iG
-//		    		System.out.println(key);
-//		    		System.out.println(gradesList);
-//		    		try {
-//		                context.write(key, gradesList);
-//		            } catch (InterruptedException e) {
-//		                throw new IOException(e);
-//		            }
-//		    		gradesList = new ArrayList<>();
-    			}// if ue from course
-    			
-    		}//End FOR iC    		
-    		
-    		}// End map
-        	
-        	
-        
-        
-     } // END class Mapper1
-    
-
-	
-	
-	// REDUCER
-	//public static class Reducer1 extends TableReducer<ImmutableBytesWritable, IntWritable, ImmutableBytesWritable>
-	public static class Reducer3 extends TableReducer<Text, FloatWritable, String> {
-
-        public void reduce(Text key, Iterable<FloatWritable> values,
-                Context context)
-                throws IOException, InterruptedException {
-        	System.out.println("#### REDUCE ####");
-//        	System.out.println(key +" "+values);
-//        	System.out.println(Bytes.toString(key.getBytes()).replace(";"," "));
-//        	
-//        	System.out.println(values.iterator().next());
-        	
-        	int count = 0;
-        	float sum = 0;
-        	for (FloatWritable val : values) {
-              sum += val.get();
-              count++;
-          }        	
-
-//        	System.out.println(sum);
-//        	System.out.println(count);
-//        	System.out.println("Name"+Bytes.toString(key.getBytes()).replace(";"," ")+"Rate: " +sum/count);
-        	String keyy = Bytes.toString(key.getBytes()).replace(";"," ")+ " " + Float.toString(sum/count);
-        	
-        	context.write(keyy,null);
-        	
-        }
+	public static  Map<String, String> CreateHashmapFromTableCourse (Connection connection) throws IOException
+	{
+     Map<String, String> map = new HashMap<>();
+	 ResultScanner resultScanner = null;
+     Table tableInter = connection.getTable(TableName.valueOf(tableC));
+     Scan scan1 = new Scan();
+     scan1.addColumn(Bytes.toBytes("#"), Bytes.toBytes("N"));
+     resultScanner = tableInter.getScanner(scan1);
+     for (Result result = resultScanner.next(); result != null; result = resultScanner.next()) {
+     	byte[] RowKey=result.getRow();
+     	String key = Bytes.toString(RowKey).split("/")[0];
+        byte[] Value = result.getValue(Bytes.toBytes("#"), Bytes.toBytes("N"));
+        String value = Bytes.toString(Value);
+        map.put(key, value);
+	}
+     return map;
+	}
+	public static Map<String, Double> CreateHashmapFromIntermResult (Connection connection) throws IOException
+	{
+     Map<String, Double> map = new HashMap<>();
+	 ResultScanner resultScanner = null;
+     Table tableInter = connection.getTable(TableName.valueOf("InterResultTableQ5"));
+     Scan scan1 = new Scan();
+     scan1.addColumn(Bytes.toBytes("result"), Bytes.toBytes("average"));
+     resultScanner = tableInter.getScanner(scan1);
+     for (Result result = resultScanner.next(); result != null; result = resultScanner.next()) {
+     	byte[] RowKey=result.getRow();
+     	String key = Bytes.toString(RowKey);
+        byte[] Value = result.getValue(Bytes.toBytes("result"), Bytes.toBytes("average"));
+        double Avgrades = ByteBuffer.wrap(Value).getDouble();
+        map.put(key, Avgrades);
+	}
+     return map;
+	}
+	public static void CreateHbaseTable (Configuration conf,String tablename, String ColumnFamily  ) throws IOException 
+	{
+		 
+		  HBaseAdmin admin = new HBaseAdmin(conf);
+  	    if (admin.tableExists(tablename)) 
+  	    {
+  	    	System.out.println("Table exist");
+  	    }
+  	    else 
+  	    {
+  	    	TableName tableNameR =  TableName.valueOf(tablename);
+	            HTableDescriptor htd = new HTableDescriptor(tableNameR);
+	            HColumnDescriptor hcd = new HColumnDescriptor(ColumnFamily);
+	            htd.addFamily(hcd);
+	            admin.createTable(htd);
+  	    }
+	}
+	public static String CheckParameters1(Connection connection ,String param1) throws IOException 
+	{
+		 Set<String> hash_Set = new HashSet<String>(); 
+		String sem1,sem2;
+		String exist =null;
+		ResultScanner resultScanner = null;
+  	    Table tableInter = connection.getTable(TableName.valueOf(tableG));
+  	    Scan scan1 = new Scan();
+        scan1.addColumn(Bytes.toBytes("#"), Bytes.toBytes("G"));
+        resultScanner = tableInter.getScanner(scan1);
+          for (Result result = resultScanner.next(); result != null; result = resultScanner.next()) {
+          	byte[] StudentRowKey=result.getRow();
+          	String key = Bytes.toString(StudentRowKey);
+            // get year from rowKey and convert it to string
+ 		    String year =key.split("/")[0];
+ 		   hash_Set.add(year);
+          }
+          for (String year : hash_Set) {
+        	  if (year.equals(param1))
+        		  exist="exist";
+        	}
+           
+          return exist;
+          }
+	public static String CheckParameters2(String param2) throws IOException 
+	{
+		 String exist=null;
+		 if (param2.equals("L1") || param2.equals("L2") || param2.equals("L3") ||param2.equals("M1") ||param2.equals("M2"))
+				 exist="exist";
+           
+          return exist;
     }
+	public static class Mapper extends TableMapper <Text, IntWritable>{
+		 public void map(ImmutableBytesWritable rowKey, Result columns, Context context)
+		   throws IOException, InterruptedException {
+
+		  try {
+		    String sem1,sem2;
+		   //passing parameters to map
+		   Configuration conf = context.getConfiguration();
+		   String param1 = conf.get("Year");
+		   String param2 = conf.get("Promotion");
 	
-	//MAIN 
-	public static void main(String[] args) throws Exception {
-		System.out.println("################# QUESTION 3 - START #################");
-		Configuration conf = HBaseConfiguration.create();		
-		Job job = Job.getInstance(conf,"question3_job");
+		   // get rowKey and convert it to string
+		   String inKey = new String(rowKey.get());
+	       // get year from rowKey and convert it to string
+		   String year =inKey.split("/")[0];
+		   // get semester from rowKey and convert it to string
+		   String semester =inKey.split("/")[2].substring(0,3);
+		   switch(param2) {
+	         case "L1" :
+	        	 sem1="S01";
+	        	 sem2="S02";
+	        	 
+	        	 if (!param1.equals(year) && !sem1.equals(semester) && !sem2.equals(semester))
+	  		   {
+	        		// System.out.println("Invalid Year or Promotion"); 
+	  			   return;
+	  		   } 
+	        	 else if (param1.equals(year) && (sem1.equals(semester) || sem2.equals(semester)))
+	           {
+	        	   // set new output key having  UE ID
+	      		   String oKey = inKey.split("/")[2];
+	      		   // get grades as output value 
+	      		   byte[] bGrades = columns.getValue(Bytes.toBytes("#"), Bytes.toBytes("G"));
+	      		   String sGrades = new String(bGrades);
+	      		   Integer grades = new Integer(sGrades);
+	      		   context.write(new Text(oKey),new IntWritable(grades));
+	           }
+	            break;
+	         case "L2" :
+	        	 sem1="S03";
+	        	 sem2="S04";
+	        	 if (!param1.equals(year) && !sem1.equals(semester) && !sem2.equals(semester))
+		  		   {
+	        		  
+		  			   return;
+		  		   } 
+		        	 else if (param1.equals(year) && (sem1.equals(semester) || sem2.equals(semester)))
+		           {
+	        		 // set new output key having  UE ID
+		      		   String oKey = inKey.split("/")[2];
+		      		   // get grades as output value 
+		      		   byte[] bGrades = columns.getValue(Bytes.toBytes("#"), Bytes.toBytes("G"));
+		      		   String sGrades = new String(bGrades);
+		      		   Integer grades = new Integer(sGrades);
+		      		   context.write(new Text(oKey),new IntWritable(grades));
+		           }
+	        	 
+	         case "L3" :
+	        	 sem1="S05";
+	        	 sem2="S06";
+	        	 if (!param1.equals(year) && !sem1.equals(semester) && !sem2.equals(semester))
+		  		   {
+	        		   
+		  			   return;
+		  		   } 
+		        	 else if (param1.equals(year) && (sem1.equals(semester) || sem2.equals(semester)))
+		           {
+		        	  // set new output key having  UE ID
+			      	  String oKey = inKey.split("/")[2];
+		      		   // get grades as output value 
+		      		   byte[] bGrades = columns.getValue(Bytes.toBytes("#"), Bytes.toBytes("G"));
+		      		   String sGrades = new String(bGrades);
+		      		   Integer grades = new Integer(sGrades);
+		      		   context.write(new Text(oKey),new IntWritable(grades));
+		           }
+	            break;
+	         case "M1" :
+	        	 sem1="S07";
+	        	 sem2="S08";
+	        	 if (!param1.equals(year) && !sem1.equals(semester) && !sem2.equals(semester))
+		  		   {
+	        		   
+		  			   return;
+		  		   } 
+		        	 else if (param1.equals(year) && (sem1.equals(semester) || sem2.equals(semester)))
+		           {
+		        	  // set new output key having  UE ID
+			      	  String oKey = inKey.split("/")[2];
+		      		   // get grades as output value 
+		      		   byte[] bGrades = columns.getValue(Bytes.toBytes("#"), Bytes.toBytes("G"));
+		      		   String sGrades = new String(bGrades);
+		      		   Integer grades = new Integer(sGrades);
+		      		   context.write(new Text(oKey),new IntWritable(grades));
+		           }
+	         case "M2" :
+	        	 sem1="S09";
+	        	 sem2="S10";
+	        	 if (!param1.equals(year) && !sem1.equals(semester) && !sem2.equals(semester))
+		  		   {   
+	        		   
+		  			   return;
+		  		   } 
+		        	 else if (param1.equals(year) && (sem1.equals(semester) || sem2.equals(semester)))
+		           {
+		        	  // set new output key having  UE ID
+			      	   String oKey = inKey.split("/")[2];
+		      		   // get grades as output value 
+		      		   byte[] bGrades = columns.getValue(Bytes.toBytes("#"), Bytes.toBytes("G"));
+		      		   String sGrades = new String(bGrades);
+		      		   Integer grades = new Integer(sGrades);
+		      		   context.write(new Text(oKey),new IntWritable(grades));
+		           }
+	            break;
+	         default :
+	            System.out.println("Invalid Promotion");
+	      }
+		   
+		 
+		  } catch (RuntimeException e){
+		   e.printStackTrace();
+		  }
+		 }
+		}
 
-		
-	    Connection connection = ConnectionFactory.createConnection(conf);
-		//input
-		String id_code = "S10B036/2015";//"S10B036/7984";// course with id
-		String[] id_coded = id_code.split("/");
-		id_coded[1] = String.valueOf(9999 - Integer.valueOf(id_coded[1])); // code year		
-		String id =id_coded[0]+"/"+id_coded[1];		
-		
-		//Rules to Students
-		Table tableCourse = connection.getTable(TableName.valueOf(tableC));
-		
-	    Get get =  new Get(Bytes.toBytes(id)); // Get row
-	    System.out.println(get);
-	    get.addColumn(Bytes.toBytes("#"),Bytes.toBytes("N")); // COurse Name
-	    
-	    Result result = tableCourse.get(get);
-	    byte [] value = result.getValue(Bytes.toBytes("#"),Bytes.toBytes("N"));
-	    //byte [] value1 = );
-	    String course_name = Bytes.toString(value);
-	    //String last = Bytes.toString(value1);
-	    
-	    System.out.println(course_name);
-        Scan scanCourse = new Scan(get);
-        scanCourse.setCaching(500);        // 1 is the default in Scan, which will be bad for MapReduce jobs
-        scanCourse.setCacheBlocks(false);  // don't set to true for MR jobs
-        System.out.println("############# call Map With ################");
-        System.out.println("Getting Course "+id+" at Table name " + tableCourse.getName());
-       
-        TableMapReduceUtil.initTableMapperJob(
-        		tableCourse.getName(), // input HBase table name
-        		scanCourse,// Scan instance to control CF and attribute selection
-        		Mapper3.class,// mapper
-        		Text.class, // mapper output key
-        		FloatWritable.class, // mapper output value
-        		job);
-        
-        job.setJarByClass(Question5.class);
-        job.setCombinerClass(Reducer3.class);
-        job.setReducerClass(Reducer3.class);
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(FloatWritable.class);
-		//job.setOutputFormatClass(NullOutputFormat.class); // because we aren't emitting anything from mapper
-        
-        FileOutputFormat.getOutputPath(job);
-        FileOutputFormat.setOutputPath(job, new Path("file:///localhost:9000/home/hadoop/out"));
-	    
-//        TableMapReduceUtil.initTableReducerJob(
-//        		id,
-//        		Reducer2.class,        		
-//        		job);
-        //TableMapReduceUtil.initTableReducerJob(tableStudent, Reducer1.class, job);
+	public  static class Reducer  extends TableReducer <Text, IntWritable, ImmutableBytesWritable> {
+		 
+		public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException{
+		  try {
+		   DecimalFormat df2 = new DecimalFormat(".##");
+		   double average;
+		   int sum = 0;
+		   int total = 0;
+		   for (IntWritable grade: values) {
+		    Integer intGrades = new Integer(grade.toString());
+		    total += 1;
+		    sum += intGrades;
+		   } 
+		   // Calculate average of grades of UE for a given year
+		   average=sum/total;
+		   // create hbase put with rowkey as year
+		   Put insHBase = new Put(key.getBytes());
+		   // insert average value to hbase 
+		   insHBase.add(Bytes.toBytes("result"), Bytes.toBytes("average"), Bytes.toBytes(average));
+		   // write data to Hbase table
+		   context.write(null, insHBase);
+		    System.out.println("UE Id"+""+key +""+"average"+""+average);
 
-        
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
-    }
+		  } catch (Exception e) {
+		   e.printStackTrace();
+		  }
+		 }
+	}
+	public static  void main(String[] args) throws Exception {
+		 Map<String, String> CourseMap = new HashMap<>();
+		 Map<String, Double> InterResultMap = new HashMap<>();
+		 Map<String,Double> ResultMap = new HashMap<>();
+   	 Configuration conf = HBaseConfiguration.create();
+   	 Connection connection = ConnectionFactory.createConnection(conf);
+   	 System.out.println("Enter a year");
+   	 Scanner scanner = new Scanner(System. in); 
+   	 String input = scanner. nextLine();
+   	 System.out.println("Enter a promotion L1/L2/L3/M1/M2");
+   	 String input2 = scanner. nextLine();
+   	 //passing parameters
+   	 conf.set("Year", input);
+   	 conf.set("Promotion", input2);
+   	 //Check rows with these  parameters exists or not 
+   	 String checkParam1 =CheckParameters1(connection ,input);
+   	 String checkParam2 =CheckParameters2(input2);
+   	 if (checkParam1!=null && checkParam2!=null)
+   	 {
+   	 Scan scan = new Scan();
+   	 Job job = Job.getInstance(conf,"JobQ5"); 
+   	 job.setJarByClass(Question5.class);
+   	 //define input hbase table
+   	    TableMapReduceUtil.initTableMapperJob(
+   	       tableG,
+   	        scan,
+   	        Mapper.class,
+   	        Text.class,
+   	        IntWritable.class,
+   	        job);
+   	   
+   	    // Create intermediate output table
+   	    CreateHbaseTable (conf,"A_21805893:Q5","result");
+   	  
+   	    // Define output table
+   	    TableMapReduceUtil.initTableReducerJob(
+   	      "A_21805893:Q5",
+   	      Reducer.class, 
+   	      job);
+   	    boolean b = job.waitForCompletion(true);
+   	    if (!b) {
+   	    	throw new IOException("error with job!");
+   	    }
+   	      
+   	 }
+   	 else
+   	 System.out.println("NOT FOUND");
+   	  
+ 
+ 
+ }
 }
 
-
-//Pour savoir le taux de réussite d’une UE depuis sa création, par rapport, au cas où, à ses
-//différents noms.
-///Aiwsbu/v1/courses/{id}/rates
-//Le serveur retournera une chaîne JSON contenant simplement un nombre, par exemple
-//(0.88 pour 88%) :
-//[{"Name":"HPC","Rate":"0.183"},{"Name":"Big Data","Rate":"0.88"},...]
-//Si l’UE n’existe pas, le serveur retournera une erreur NOT FOUND
