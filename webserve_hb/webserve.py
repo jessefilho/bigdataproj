@@ -70,11 +70,11 @@ def get_question4(handler):
 #Question5
 def get_question5(handler):
     print len(handler.path)
-    program = urllib.unquote(handler.path[19:-11])
+    program = urllib.unquote(handler.path[20:-11])
     print program
-    year =  urllib.unquote(handler.path[33:])
+    year =  urllib.unquote(handler.path[29:])
     print year
-    return bdproj.question5(program, year)
+    return bdproj.question5(program,year)
 
 #Question6
 def get_question6(handler):

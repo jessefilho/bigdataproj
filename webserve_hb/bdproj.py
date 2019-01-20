@@ -1,3 +1,5 @@
+from datetime import date
+
 import happybase
 import collections
 from collections import OrderedDict
@@ -96,20 +98,13 @@ def question4(id_ue,id_year):
     return json.dumps(q4,sort_keys=True, indent=4)
 
 def question5(program,year):
-    prfix = b'%s' %(program)
     table = connection.table(b'A_21805893:Q5')
-    rate = []
-    q4 = []
-    q4_result = []
-    year = year
-
-    for key, data in table.scan(row_prefix=prfix+"/"+year):
-        q4_result.append(dict(Name = data.get(b'C:NAME'), Rate = float(data.get(b'#:RATE'))))
-        rate.append(float(data.get(b'#:RATE')))
-
-    q4.append("("+str(max(rate))+" pour "+str(max(rate)*100)+"% )")
-    q4.append(q4_result);
-    return json.dumps(q4,sort_keys=True, indent=4)
+    q5 = []
+    for key, data in table.scan(filter="SingleColumnValueFilter ('result','program',=,'regexstring:^%s')" % (program)):
+        if data.get(b'result:year') == year:
+            q5.append(key)
+            q5.append(dict(Name = data.get(b'result:courseName'), Grade = data.get(b'result:average')))
+    return json.dumps(q5, sort_keys=True, indent=4)
 
 def question6(name_prof):
     prfix = b'%s' %(name_prof)
@@ -143,4 +138,13 @@ def question7(program,year):
     q4.append(q4_result);
     return json.dumps(q4,sort_keys=True, indent=4)
 
-#print question6();
+
+
+
+
+
+
+
+
+
+#print question5('M1','2007');

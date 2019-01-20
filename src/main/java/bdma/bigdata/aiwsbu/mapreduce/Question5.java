@@ -1,21 +1,26 @@
 package bdma.bigdata.aiwsbu.mapreduce;
 
+import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-
+import java.util.Map.Entry;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
@@ -24,6 +29,11 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.filter.BinaryComparator;
+import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.RegexStringComparator;
+import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
@@ -41,6 +51,42 @@ public class Question5 {
 	
 	private static String tableG = "A_21805893:G";
 	private static String tableC = "A_21805893:C";
+	private static String interResultTableQ5 = "A_21805893:interQ5";
+	private static String resultTableQ5 = "A_21805893:Q5";
+	
+	public static void WriteResultIntoHbase (Table tableResult,String key,String courseName,String average,String year,String promotion) throws MasterNotRunningException, ZooKeeperConnectionException, IOException
+	{
+		 Put course = new Put(Bytes.toBytes(key));
+		 course.addColumn(Bytes.toBytes("result"), Bytes.toBytes("courseName"), Bytes.toBytes(courseName));
+		 course.addColumn(Bytes.toBytes("result"), Bytes.toBytes("year"), Bytes.toBytes(year));
+		 course.addColumn(Bytes.toBytes("result"), Bytes.toBytes("promotion"), Bytes.toBytes(promotion));
+		 course.addColumn(Bytes.toBytes("result"), Bytes.toBytes("average"), Bytes.toBytes(average));
+		
+  	     tableResult.put(course);
+		
+	}
+	public static String ReturnCourseName (Connection connection,Table TableCourse,String year,String code) throws IOException 
+	{ 
+		Scan scan1 = new Scan();
+		scan1.addColumn(Bytes.toBytes("#"), Bytes.toBytes("N"));
+		 Filter f1 = new RowFilter(CompareFilter.CompareOp.EQUAL,
+				 new RegexStringComparator(code+"\\/"+".*"));
+		 scan1.setFilter(f1);
+		 ResultScanner scanner1=TableCourse.getScanner(scan1);
+		 byte[] Value;
+		 byte[] RowKey;
+		 String courseName =null;
+		 for (Result r:scanner1)
+		 { 
+			 RowKey=r.getRow();
+			 String CourseCode = Bytes.toString(RowKey).split("/")[0];
+			 Value = r.getValue(Bytes.toBytes("#"), Bytes.toBytes("N"));
+			 courseName=Bytes.toString(Value);
+		 }
+		  
+		return courseName;
+		
+	}
 	public static  Map<String, String> CreateHashmapFromTableCourse (Connection connection) throws IOException
 	{
      Map<String, String> map = new HashMap<>();
@@ -62,7 +108,7 @@ public class Question5 {
 	{
      Map<String, Double> map = new HashMap<>();
 	 ResultScanner resultScanner = null;
-     Table tableInter = connection.getTable(TableName.valueOf("InterResultTableQ5"));
+     Table tableInter = connection.getTable(TableName.valueOf(interResultTableQ5));
      Scan scan1 = new Scan();
      scan1.addColumn(Bytes.toBytes("result"), Bytes.toBytes("average"));
      resultScanner = tableInter.getScanner(scan1);
@@ -281,7 +327,7 @@ public class Question5 {
 		 Map<String, Double> InterResultMap = new HashMap<>();
 		 Map<String,Double> ResultMap = new HashMap<>();
    	 Configuration conf = HBaseConfiguration.create();
-   	 Connection connection = ConnectionFactory.createConnection(conf);
+   	 Connection connection =ConnectionFactory.createConnection(conf);
    	 System.out.println("Enter a year");
    	 Scanner scanner = new Scanner(System. in); 
    	 String input = scanner. nextLine();
@@ -308,19 +354,46 @@ public class Question5 {
    	        job);
    	   
    	    // Create intermediate output table
-   	    CreateHbaseTable (conf,"A_21805893:Q5","result");
-   	  
+   	    CreateHbaseTable (conf,interResultTableQ5,"result");
+   	 /*
+   	        Filter filter2 = new // co RowFilterExample-2-Filter2 Another filter, this time using a regular expression to match the row keys.
+   		    RowFilter(// co RowFilterExample-2-Filter2 Another filter, this time using a regular expression to match the row keys.
+   		    CompareFilter.CompareOp.EQUAL, new RegexStringComparator(".*-.5"));
+   		    scan.setFilter(filter2);
+   		    ResultScanner scanner2 = table.getScanner(scan);
+    */
    	    // Define output table
    	    TableMapReduceUtil.initTableReducerJob(
-   	      "A_21805893:Q5",
+   	      interResultTableQ5,
    	      Reducer.class, 
    	      job);
    	    boolean b = job.waitForCompletion(true);
    	    if (!b) {
    	    	throw new IOException("error with job!");
    	    }
-   	      
-   	 }
+   	    else {
+   	   
+   	 // Return course name 
+   	 Table tableCourse = connection.getTable(TableName.valueOf(tableC));
+   	 ResultScanner resultScanner = null;
+     Table tableInter = connection.getTable(TableName.valueOf(interResultTableQ5));
+     Scan scan1 = new Scan();
+     scan1.addColumn(Bytes.toBytes("result"), Bytes.toBytes("average"));
+     resultScanner = tableInter.getScanner(scan1);
+     CreateHbaseTable (conf,resultTableQ5,"result");
+     Table tableResult = connection.getTable(TableName.valueOf(resultTableQ5));
+     for (Result result = resultScanner.next(); result != null; result = resultScanner.next()) {
+     	byte[] RowKey=result.getRow();
+     	String key = Bytes.toString(RowKey);
+        byte[] Value = result.getValue(Bytes.toBytes("result"), Bytes.toBytes("average"));
+        double avgEca = ByteBuffer.wrap(Value).getDouble();
+        String Avgrades = Double.toString(avgEca);
+        String courseName =ReturnCourseName (connection,tableCourse,input,key);
+        System.out.println("code"+" "+key+" "+"name"+" "+courseName+" "+"year"+" "+input+" "+"promotion"+" "+input2+" "+"average"+" "+Avgrades);
+        WriteResultIntoHbase (tableResult,key,courseName,Avgrades,input,input2) ;
+	}
+   	}
+}
    	 else
    	 System.out.println("NOT FOUND");
    	  
