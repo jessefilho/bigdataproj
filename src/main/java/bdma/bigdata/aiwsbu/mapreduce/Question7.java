@@ -38,6 +38,10 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
 public class Question7 {
+	
+	private static String tableG = "A_21805893:G";
+	private static String interResultTableQ7 = "A_21805893:interQ7";
+	private static String resultTableQ7 = "A_21805893:Q7";
 
 	public static void CreateHbaseTable (Configuration conf,String tablename, String ColumnFamily  ) throws IOException 
 	{
@@ -62,7 +66,7 @@ public class Question7 {
 		String sem1,sem2;
 		String exist =null;
 		ResultScanner resultScanner = null;
-		Table tableInter = connection.getTable(TableName.valueOf("A_21805893:G"));
+		Table tableInter = connection.getTable(TableName.valueOf(tableG));
 		Scan scan1 = new Scan();
 		scan1.addColumn(Bytes.toBytes("#"), Bytes.toBytes("G"));
 		resultScanner = tableInter.getScanner(scan1);
@@ -265,7 +269,7 @@ public class Question7 {
 				job.setJarByClass(Question7.class);
 				//define input hbase table
 				TableMapReduceUtil.initTableMapperJob(
-						"A_21805893:G",
+						tableG,
 						scan,
 						Mapper.class,
 						Text.class,
@@ -273,11 +277,11 @@ public class Question7 {
 						job);
 
 				// Create intermediate output table
-				CreateHbaseTable (conf,"A_21805893:interQ7","result");
+				CreateHbaseTable (conf,interResultTableQ7,"result");
 
 				// Define output table
 				TableMapReduceUtil.initTableReducerJob(
-						"A_21805893:interQ7",
+						interResultTableQ7,
 						Reducer.class, 
 						job);
 				boolean b = job.waitForCompletion(true);
@@ -287,7 +291,7 @@ public class Question7 {
 				else {
 					//Read from intermediate result and create hashmap than sort it by descreasing value
 					ResultScanner resultScanner = null;
-					Table tableInter = connection.getTable(TableName.valueOf("A_21805893:interQ7"));
+					Table tableInter = connection.getTable(TableName.valueOf(interResultTableQ7));
 					Scan scan1 = new Scan();
 					scan1.addColumn(Bytes.toBytes("result"), Bytes.toBytes("average"));
 					resultScanner = tableInter.getScanner(scan1);
@@ -300,13 +304,16 @@ public class Question7 {
 					}
 					sorted = StudentMapping.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,LinkedHashMap::new));
 					//create and write final result to table
-					CreateHbaseTable (conf,"A_21805893:Q7","result");
+					CreateHbaseTable (conf,resultTableQ7,"result");
 					HBaseAdmin admin1 = new HBaseAdmin(conf);
-					Table tableResult = connection.getTable(TableName.valueOf("A_21805893:Q7"));
+					Table tableResult = connection.getTable(TableName.valueOf(resultTableQ7));
 					for (Entry<String, Double> entry : sorted.entrySet()) {
 						Put student = new Put(Bytes.toBytes(entry.getKey()));
-						student.addColumn(Bytes.toBytes("result"), Bytes.toBytes("average"), Bytes.toBytes(entry.getValue()));
+						student.addColumn(Bytes.toBytes("result"), Bytes.toBytes("average"), Bytes.toBytes(Double.toString(entry.getValue())));
+						student.addColumn(Bytes.toBytes("result"), Bytes.toBytes("year"), Bytes.toBytes(input));
+						student.addColumn(Bytes.toBytes("result"), Bytes.toBytes("promotion"), Bytes.toBytes(input2));
 						tableResult.put(student);
+						System.out.println(entry.getKey()+" "+entry.getValue()+" "+input+" " +input2);
 					}
 					//System.out.println("map after sorting by values in descending order:"+sorted);	
 				}
@@ -319,5 +326,6 @@ public class Question7 {
 
 
 		}
+
 	}
 }

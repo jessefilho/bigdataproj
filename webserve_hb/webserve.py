@@ -87,11 +87,11 @@ def get_question6(handler):
 #Question7
 def get_question7(handler):
     print len(handler.path)
-    program = urllib.unquote(handler.path[19:-11])
+    program = urllib.unquote(handler.path[17:-11])
     print program
-    year =  urllib.unquote(handler.path[33:])
+    year =  urllib.unquote(handler.path[26:])
     print year
-    return bdproj.question5(program, year)
+    return bdproj.question7(program, year)
 
 def get_records(handler):
     return records

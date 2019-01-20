@@ -123,28 +123,16 @@ def question6(name_prof):
     return json.dumps(q6,sort_keys=True, indent=4)
 
 def question7(program,year):
-    prfix = b'%s' %(program)
-    table = connection.table(b'A_21805893:Q5')
-    rate = []
-    q4 = []
-    q4_result = []
-    year = year
+    table = connection.table(b'A_21805893:Q7')
+    q5 = []
+    for key, data in table.scan(filter="SingleColumnValueFilter ('result','promotion',=,'regexstring:^%s')" % (program)):
 
-    for key, data in table.scan(row_prefix=prfix+"/"+year):
-        q4_result.append(dict(Name = data.get(b'C:NAME'), Rate = float(data.get(b'#:RATE'))))
-        rate.append(float(data.get(b'#:RATE')))
-
-    q4.append("("+str(max(rate))+" pour "+str(max(rate)*100)+"% )")
-    q4.append(q4_result);
-    return json.dumps(q4,sort_keys=True, indent=4)
+        if data.get(b'result:year') == year:
+            q5.append(key+':'+data.get(b'result:average'))
 
 
 
+    return json.dumps(q5, sort_keys=True, indent=4)
 
 
-
-
-
-
-
-#print question5('M1','2007');
+#print question7('M1','2007');
