@@ -95,6 +95,21 @@ def question4(id_ue,id_year):
     q4.append(q4_result);
     return json.dumps(q4,sort_keys=True, indent=4)
 
+def question5(program,year):
+    prfix = b'%s' %(program)
+    table = connection.table(b'A_21805893:Q5')
+    rate = []
+    q4 = []
+    q4_result = []
+    year = year
+
+    for key, data in table.scan(row_prefix=prfix+"/"+year):
+        q4_result.append(dict(Name = data.get(b'C:NAME'), Rate = float(data.get(b'#:RATE'))))
+        rate.append(float(data.get(b'#:RATE')))
+
+    q4.append("("+str(max(rate))+" pour "+str(max(rate)*100)+"% )")
+    q4.append(q4_result);
+    return json.dumps(q4,sort_keys=True, indent=4)
 
 def question6(name_prof):
     prfix = b'%s' %(name_prof)
@@ -105,11 +120,27 @@ def question6(name_prof):
 
     for key, data in table.scan(row_prefix=prfix):
         q6_result.append(key.split("/")[1]+"/"+ str(9999 - int(key.split("/")[2])));
-        q6_result.append(dict(Name = data.get(b'C:NAME'), Rate = float(data.get(b'#:RATE'))))
+        q6_result.append(dict(Name=data.get(b'C:NAME'), Rate=float(data.get(b'#:RATE'))))
 
 
 
     q6.append(q6_result);
     return json.dumps(q6,sort_keys=True, indent=4)
+
+def question7(program,year):
+    prfix = b'%s' %(program)
+    table = connection.table(b'A_21805893:Q5')
+    rate = []
+    q4 = []
+    q4_result = []
+    year = year
+
+    for key, data in table.scan(row_prefix=prfix+"/"+year):
+        q4_result.append(dict(Name = data.get(b'C:NAME'), Rate = float(data.get(b'#:RATE'))))
+        rate.append(float(data.get(b'#:RATE')))
+
+    q4.append("("+str(max(rate))+" pour "+str(max(rate)*100)+"% )")
+    q4.append(q4_result);
+    return json.dumps(q4,sort_keys=True, indent=4)
 
 #print question6();

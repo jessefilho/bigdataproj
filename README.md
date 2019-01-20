@@ -9,8 +9,8 @@ Nascimento Filho, Jessé Ferreira*
 To execute this project on your own environment make sure that you have installed and setting:
 
  - Java SDK 1.8;
- - Hadoop;
- - HBase;
+ - Hadoop version 2.8.4;
+ - HBase version 1.2.6.1;
  - MapReduce;
  - Eclipse+m2e;
 
@@ -27,11 +27,11 @@ load_lib/ is a directory with all dependecies of [hadoop](https://mvnrepository.
 
 **Services start:**
 
-After instalation of hadoop and hbase;
+After installation of hadoop and hbase;
 
-`$ start-all.sh \ 
- start-hbase.sh  \
- hbase-daemon.sh start thrift`
+`$ start-all.sh` 
+`$ start-hbase.sh`
+`$ hbase-daemon.sh start thrift`
 
 Run Python WEB-SERVER:
 <YOUR LOCAL DIR>/bigdata/webserve_hb`$ python webserve.py`

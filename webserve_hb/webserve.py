@@ -67,6 +67,15 @@ def get_question4(handler):
     print year
     return bdproj.question4(ue,year)
 
+#Question5
+def get_question5(handler):
+    print len(handler.path)
+    program = urllib.unquote(handler.path[19:-11])
+    print program
+    year =  urllib.unquote(handler.path[33:])
+    print year
+    return bdproj.question5(program, year)
+
 #Question6
 def get_question6(handler):
     print len(handler.path)
@@ -74,6 +83,15 @@ def get_question6(handler):
     print name_prof
 
     return bdproj.question6(name_prof)
+
+#Question7
+def get_question7(handler):
+    print len(handler.path)
+    program = urllib.unquote(handler.path[19:-11])
+    print program
+    year =  urllib.unquote(handler.path[33:])
+    print year
+    return bdproj.question5(program, year)
 
 def get_records(handler):
     return records
@@ -140,7 +158,9 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             r'^/aiwsbu/v1/rates/([^/])+$': {'GET': get_question2, 'media_type': 'application/json'},
             r'^/aiwsbu/v1/courses/([^/])+/rates$': {'GET': get_question3, 'media_type': 'application/json'},
             r'^/aiwsbu/v1/courses/([^/])+/rates/([^/])+$': {'GET': get_question4,'media_type': 'application/json'},
+            r'^/aiwsbu/v1/programs/([^/])+/means/([^/])+$': {'GET': get_question5, 'media_type': 'application/json'},
             r'^/aiwsbu/v1/instructors/([^/])+/rates$': {'GET': get_question6, 'media_type': 'application/json'},
+            r'^/aiwsbu/v1/ranks/([^/])+/years/([^/])+$': {'GET': get_question7, 'media_type': 'application/json'},
 
             r'^/record/': {'GET': get_record, 'PUT': set_record, 'DELETE': delete_record,
                            'media_type': 'application/json'}}
