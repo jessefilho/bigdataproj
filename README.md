@@ -41,14 +41,35 @@ If some message like `Pipe is broken` appears, please re-running web-server, bec
 
 ***Questions for test this project:***
 
-Question 1 API REST e.i:
-http://localhost:8080/aiwsbu/v1/students/2017000306/transcripts/L2
+Our REST URI execute query from follow templates such as below:
 
-Question 2 API REST e.i:
+Question 1: \\ http://localhost:8080/aiwsbu/v1/students/[ID]/transcripts/[program] \\
+e.i:\\
+http://localhost:8080/aiwsbu/v1/students/2016000999/transcripts/L3
+
+Question 2: \\ http://localhost:8080/aiwsbu/v1/rates/[semester]\\
+e.i:\\
 http://localhost:8080/aiwsbu/v1/rates/S07
 
-Question 3 API REST e.i:
-http://localhost:8080/aiwsbu/v1/courses/S01A005/rates
+Question 3 API: \\ http://localhost:8080/aiwsbu/v1/courses/[id]/rates\\
+e.i:\\
+http://localhost:8080/aiwsbu/v1/courses/S01A001/rates
+
+Question 4: \\ http://localhost:8080/aiwsbu/v1/courses/[id]/rates/[year]\\
+e.i:\\
+http://localhost:8080/aiwsbu/v1/courses/S10B047/rates/2018
+
+Question 5: \\ http://localhost:8080/aiwsbu/v1/programs/[program]/means/[year]\\
+e.i:\\
+http://localhost:8080/aiwsbu/v1/programs/M1/means/2007
+
+Question 6: \\ http://localhost:8080/aiwsbu/v1/instructors/[name]/rates\\
+e.i:\\
+http://localhost:8080/aiwsbu/v1/instructors/Rhnoxk\%20Htrbdvhgw/rates
+
+Question 7: \\ http://localhost:8080/aiwsbu/v1/ranks/[program]/years/[year]\\
+e.i:\\
+http://localhost:8080/aiwsbu/v1/ranks/M1/years/2007
 
 References
 -
